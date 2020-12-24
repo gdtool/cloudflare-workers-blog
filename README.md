@@ -2,6 +2,7 @@
 兼容静态博客的速度,以及动态博客的灵活性,方便搭建不折腾.
 演示地址: [https://blog.gezhong.vip](https://blog.gezhong.vip "cf-blog演示站点")
 
+### TG 讨论群: [@CloudflareBlog](https://t.me/cloudflareblog "")
 # 主要特点
 * 使用workers提供的KV作为数据库
 * 使用cloudflare缓存html来降低KV的读写
