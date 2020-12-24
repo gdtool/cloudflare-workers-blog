@@ -18,6 +18,7 @@ const OPT = {
     "codeBeforHead":``,//其他代码,显示在</head>前
     "codeBeforBody":``,//其他代码,显示在</body>前
     "commentCode":``,//评论区代码
+    "widgetOther":``,//20201224新增参数,用于右侧 小部件扩展
     "otherCodeA":``,//其他参数A,可设置为 "阅读次数:"四个大字
     "otherCodeB":``,//其他参数A
     "otherCodeC":``,//其他参数A
