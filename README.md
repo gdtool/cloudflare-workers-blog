@@ -18,6 +18,17 @@
 # 部署步骤
   这里没有实时预览真难受,一系列坑会慢慢填到博客,敬请关注 [https://blog.gezhong.vip](https://blog.gezhong.vip "")
 
+# 更新日志
+
+> [持续更新地址https://blog.gezhong.vip/article/009000/update-log.html](https://blog.gezhong.vip/article/009000/update-log.html "更新日志")
+  
+## 最近更新(12-24)
+
+ 本次更新,主要针对seo和阅读次数,以及多项细节优化
+
+
+
+
 ### 前端演示:[https://blog.gezhong.vip](https://blog.gezhong.vip "演示站点")
 ![](https://s3.ax1x.com/2020/12/22/rrP81S.png)
 
