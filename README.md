@@ -23,9 +23,9 @@
 
 > [持续更新地址https://blog.gezhong.vip/article/009000/update-log.html](https://blog.gezhong.vip/article/009000/update-log.html "更新日志")
   
-## 最近更新(12-24)
-
- 本次更新,主要针对seo和阅读次数,以及多项细节优化
+## 最近更新(2020-12-31)
+* 2020-12-31:加入sitemap.xml
+* 2020-12-24:本次更新,主要针对seo和阅读次数,以及多项细节优化
 
 
 
