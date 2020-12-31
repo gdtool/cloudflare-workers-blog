@@ -113,7 +113,7 @@
 		$('#link').val(articleJson.link);
 		$('#createDate').val(articleJson.createDate.replace(" ","T"));
 		$('#tags').val(articleJson.tags);
-		$('#priority').selectpicker('val', (articleJson.changefreq === undefined ? "0.5":articleJson.changefreq));
+		$('#priority').val( (articleJson.priority=== undefined ? "0.5":articleJson.priority) );
 		$('#changefreq').selectpicker('val', (articleJson.changefreq === undefined ? "daily":articleJson.changefreq));
 	
 		$('#WidgetCategory').val(JSON.stringify(categoryJson));
