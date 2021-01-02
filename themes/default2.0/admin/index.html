@@ -158,6 +158,7 @@
 		var categoryJson = <!--{categoryJson}-->;
 		//获取菜单
 		var menuJson = <!--{menuJson}-->;
+		var linkJson = <!--{linkJson}-->;
 		var mdEditor = editormd("content", {
 				// width  : "90%",
 				 height : 640,
@@ -174,6 +175,7 @@
 		
 		$('#WidgetCategory').val(JSON.stringify(categoryJson));
 		$('#WidgetMenu').val(JSON.stringify(menuJson));
+		$('#WidgetLink').val(JSON.stringify(linkJson));
 		var category = $('#category');
 		category.empty();
 		for (var i = 0; i < categoryJson.length; i++) {
