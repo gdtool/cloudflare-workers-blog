@@ -190,17 +190,16 @@
 								<p class="widget-title">分类目录</p>
 								<ul>
 									{{ #widgetCategoryList }}
-									<li class="cat-item cat-item-5"><a href="{{ &url }}">{{ &title }}</a></li>
+									<li class="cat-item cat-item-5"><a href="/category/{{&.}}">{{&.}}</a></li>
 									{{ /widgetCategoryList }}
 								</ul>
 							</aside>
 							<aside id="tag_cloud-2" class="widget widget_tag_cloud">
 								<p class="widget-title">标签云</p>
 								<div class="tagcloud">
-									<a href="/tags/cf-blog" class="tag-cloud-link tag-link-18 tag-link-position-3" style="font-size: 8pt;">cf-blog</a>
-									
+								
 									{{ #widgetTagsList }}
-									<a href="/tags/{{ &title }}" class="tag-cloud-link tag-link-18 tag-link-position-3" style="font-size: 8pt;">{{ &title }}</a>
+									<a href="/tags/{{&.}}" class="tag-cloud-link tag-link-18 tag-link-position-3" style="font-size: 8pt;">{{&.}}</a>
 									{{ /widgetTagsList }}
 
 								</div>
