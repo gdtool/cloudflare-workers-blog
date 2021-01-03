@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{ &title }}</title>
+		<meta name="keywords" content="{{ &keyWords }}" />
+		<meta name="description" content="{{ &OPT.siteDescription }}" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=0.5">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.1/styles/xcode.min.css">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://cdn.staticfile.org/jquery/1.11.0/jquery.min.js" type="a73da9fd004c0b2dc959c576-text/javascript"></script>
+		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/yinwang/files/bootstrap-tooltips.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/yinwang/files/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/yinwang/files/post.css">
+		
+		{{ &OPT.codeBeforHead }}
+	</head>
+	<body>
+		<script type="e8377484360c671c99278e90-text/javascript">if (/mobile/i.test(navigator.userAgent) || /android/i.test(navigator.userAgent)) {
+				document.body.classList.add('mobile')
+			}</script>
+		<div>
+			<div class="inner">
+				<h2>{{ &articleSingle.title }}</h2>
+				{{ &articleSingle.contentHtml }}
+			</div>
+		</div>
+	</body>
+	
+	<script src="https://cdn.staticfile.org/highlight.js/10.0.1/highlight.min.js" type="a73da9fd004c0b2dc959c576-text/javascript"></script>
+	<script src="https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/yinwang/files/main.js" type="a73da9fd004c0b2dc959c576-text/javascript"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js" type="a73da9fd004c0b2dc959c576-text/javascript"></script>
+
+	<script type="e8377484360c671c99278e90-text/javascript">window.dataLayer = window.dataLayer || [];
+		function gtag() {
+			dataLayer.push(arguments);
+		}
+		gtag('js', new Date());
+		gtag('config', 'UA-160006603-1');</script>
+	{{ &OPT.codeBeforBody }}
+</html>

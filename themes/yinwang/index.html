@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{ &title }}</title>
+		<meta name="keywords" content="{{ &keyWords }}" />
+		<meta name="description" content="{{ &OPT.siteDescription }}" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=0.5">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.1/styles/xcode.min.css">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://cdn.staticfile.org/jquery/1.11.0/jquery.min.js" type="a73da9fd004c0b2dc959c576-text/javascript"></script>
+		
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/yinwang/files/bootstrap-tooltips.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/yinwang/files/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/yinwang/files/home.css">
+		
+		{{ &OPT.codeBeforHead }}
+	</head>
+	<body>
+		<script type="a73da9fd004c0b2dc959c576-text/javascript">if (/mobile/i.test(navigator.userAgent) || /android/i.test(navigator.userAgent)) {
+				document.body.classList.add('mobile')
+			}</script>
+		<nav class="navbar navbar-default" style="opacity:.9;" role="navigation">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#navbar-bs">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="/" title="{{ &OPT.siteDescription }}" data-toggle="tooltip" data-placement="right">{{ &title }}</a></div>
+				<div class="navbar-collapse collapse" id="navbar-bs" style="height:1px;">
+					<ul class="nav navbar-nav navbar-right">
+						{{ #widgetMenuList }}
+						<li class="active"><a href="{{ &url }}" target="_self">{{ &title }}</a></li>
+						{{ /widgetMenuList }}
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<div>
+			<div class="outer">
+				<ul class="list-group">
+					{{ #articleList }}
+					<li class="list-group-item title">
+						<div class="date">{{ &createDate }}</div>
+						<a href="/article/{{&id}}/{{&link}}.html" target="_self">{{ &title }}</a>
+						<div class="word-count">{{&contentLength}}字</div>
+					</li>
+					{{ /articleList }}
+				</ul>
+			</div>
+			<div class="oldblog">
+				<p class="text-center">
+					{{ &OPT.copyRight }}
+				</p>
+			</div>
+		</div>
+
+		{{ &OPT.codeBeforBody }}
+	</body>
+	<script src="https://cdn.staticfile.org/highlight.js/10.0.1/highlight.min.js" type="a73da9fd004c0b2dc959c576-text/javascript"></script>
+	<script src="https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/yinwang/files/main.js" type="a73da9fd004c0b2dc959c576-text/javascript"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js" type="a73da9fd004c0b2dc959c576-text/javascript"></script>
+	<script type="a73da9fd004c0b2dc959c576-text/javascript">window.dataLayer = window.dataLayer || [];
+		function gtag() {
+			dataLayer.push(arguments);
+		}
+		gtag('js', new Date());
+		gtag('config', 'UA-160006603-1');</script>
+
+</html>
