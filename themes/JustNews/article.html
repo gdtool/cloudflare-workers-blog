@@ -37,8 +37,13 @@
 						<span class="icon-bar icon-bar-3"></span>
 					</button>
 					<div class="logo">
-						<a href="/" rel="home">
-							<img src="{{ &OPT.logo }}" alt="请设置OPT.logo"></a>
+						{{ #OPT.logo }}
+						<a href="/" rel="home"><img src="{{ &OPT.logo }}" alt="{{ &OPT.siteName }}"></a>
+						{{ /OPT.logo }}
+						
+						{{ ^OPT.logo }}
+						<a href="/" rel="home"><img src="https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/logo.png" alt="请自定义OPT.logo"></a>
+						{{ /OPT.logo }}
 					</div>
 				</div>
 				<div class="collapse navbar-collapse">
