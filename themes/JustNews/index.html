@@ -253,23 +253,7 @@
 			/* ]]> */
 			</script>
 		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/image.js?ver=3.4.9' id='fifu-image-js-js'></script>
-		<script id="module-highlight-js">(function($) {
-				$(function() {
-					$("pre code").each(function(i, e) {
-						var thisclass = $(this).attr("class");
-						if (typeof thisclass !== "undefined") {
-							if (thisclass.indexOf("katex") === -1 && thisclass.indexOf("mermaid") === -1 && thisclass.indexOf("seq") === -1 && thisclass.indexOf("flow") === -1) {
-								if (typeof hljs !== "undefined") {
-									$(this).closest("pre").addClass("hljs");
-									hljs.highlightBlock(e);
-								} else {
-									console.log("%c WP Githuber MD %c You have enabled highlight.js modules already, but you have to update this post to take effect, identifying which file should be loaded.\nGithuber MD does not load a whole-fat-packed file for every post.", "background: #222; color: #bada55", "color: #637338");
-								}
-							}
-						}
-					});
-				});
-			})(jQuery);</script>
+
 		<script id="module-clipboard">(function($) {
 				$(function() {
 					var pre = document.getElementsByTagName("pre");
