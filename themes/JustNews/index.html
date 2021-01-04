@@ -9,7 +9,7 @@
 		<meta name="keywords" content="{{ &keyWords }}" />
 		<meta name="description" content="{{ &OPT.siteDescription }}" />
 
-		<link rel='stylesheet' id='stylesheet-css' href='./files/main.css' type='text/css' media='all' />
+		<link rel='stylesheet' id='stylesheet-css' href='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/main.css' type='text/css' media='all' />
 		<link rel='stylesheet' id='font-awesome-css' href='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/font-awesome.css?ver=6.1.2' type='text/css' media='all' />
 		<link rel='stylesheet' id='wp-block-library-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/block-library/style.min.css?ver=5.6' type='text/css' media='all' />
 		<link rel='stylesheet' id='wp-components-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/components/style.min.css?ver=5.6' type='text/css' media='all' />
@@ -253,16 +253,6 @@
 			/* ]]> */
 			</script>
 		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/image.js?ver=3.4.9' id='fifu-image-js-js'></script>
-		<script id="preference-link-target">(function($) {
-				$(function() {
-					$(".post").find("a").each(function() {
-						var link_href = $(this).attr("href");
-						if (link_href.indexOf("#") == -1) {
-							$(this).attr("target", "_blank");
-						}
-					});
-				});
-			})(jQuery);</script>
 		<script id="module-highlight-js">(function($) {
 				$(function() {
 					$("pre code").each(function(i, e) {

@@ -1662,38 +1662,7 @@
         }
       }
       $(document).ready(function() {
-        if ("baiduboxapp" == prefixpart.match(/baiduboxapp/i)) {
-          $(document).on("click", "a.j-wpcom-lightbox", function(event) {
-            event.preventDefault();
-            /** @type {string} */
-            var EMPTY_GIF = "baiduboxapp://v19/utils/previewImage?params=" + encodeURIComponent(JSON.stringify({
-              urls : urlList,
-              current : $(this).attr("href")
-            }));
-            /** @type {!Element} */
-            var i = document.createElement("iframe");
-            /** @type {string} */
-            i.style.display = "none";
-            /** @type {string} */
-            i.src = EMPTY_GIF;
-            /** @type {!HTMLBodyElement} */
-            var s = document.body;
-            s.appendChild(i);
-            setTimeout(function() {
-              s.removeChild(i);
-              /** @type {null} */
-              i = null;
-            }, 0);
-          });
-        } else {
-          var body = $(".entry-content .j-wpcom-lightbox");
-          if (body.length) {
-            body.find("noscript").remove();
-            body.SmartPhoto({
-              nav : false
-            });
-          }
-        }
+
         $(".j-lazy").lazyload({
           webp : webpPngbinary,
           threshold : 250,
