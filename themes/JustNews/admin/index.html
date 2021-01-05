@@ -139,7 +139,7 @@
 					<textarea class="form-control" id="importJson" name="importJson" rows="3" placeholder='复制完整的导出json'></textarea>
 				</div>
 
-				<a  tabindex="0"  role="button"  type="submit" id="btn_import" class="btn btn-default" onclick="import()">导入</a>
+				<a  tabindex="0"  role="button"  type="submit" id="btn_import" class="btn btn-default" onclick="importBlog()">导入</a>
 				<a  tabindex="0"  role="button"  type="submit" id="btn_export" class="btn btn-default"  href="/admin/export/" >导出</a>
 			</form>
 
@@ -275,7 +275,7 @@
         });
     }
     //导入json
-    function import(){
+    function importBlog(){
         if(!isJSON($('#importJson').val()))
         {
             alert("导入格式错误"); 
