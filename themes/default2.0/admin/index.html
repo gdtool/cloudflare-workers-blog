@@ -20,7 +20,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-default " role="navigation">
 	<div class="container-fluid">
 
 	<div>
@@ -132,6 +132,17 @@
 				<a  tabindex="0"  role="button"  type="submit" id="btn_saveConfig" class="btn btn-default" onclick="saveConfig()">保存</a>
 			</form>
 			
+
+			<form id="importForm" role="form" >
+				<div class="form-group">
+				    <label for="name">导出/导入</label>
+					<textarea class="form-control" id="importJson" name="importJson" rows="3" placeholder='复制完整的导出json'></textarea>
+				</div>
+
+				<a  tabindex="0"  role="button"  type="submit" id="btn_import" class="btn btn-default" onclick="importBlog()">导入</a>
+				<a  tabindex="0"  role="button"  type="submit" id="btn_export" class="btn btn-default"  href="/admin/export/" >导出</a>
+			</form>
+
 			
 		</div>
 	</div>
@@ -263,6 +274,24 @@
             }
         });
     }
+    //导入json
+    function importBlog(){
+        if(!isJSON($('#importJson').val()))
+        {
+            alert("导入格式错误"); 
+            return false;
+        }
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+			contentType: "application/json; charset=utf-8",
+            url: "/admin/import/" ,//url
+			data: JSON.stringify($("#importForm").serializeArray()), 
+            success: function (result) {
+                alert(result.msg);
+            }
+        });
+    }
     //发布
     function publish(){
         if (confirm("确定吗?发布将清理所有静态缓存,重新生成")==false){ 
@@ -293,7 +322,7 @@
                 return false;
             }
         }
-        console.log('It is not a string!')
+        return false;
     }
 </script>
  
