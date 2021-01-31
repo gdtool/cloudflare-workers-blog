@@ -22,8 +22,33 @@ const OPT = { //网站配置
         //关闭email匹配和@匹配，否则图片使用jsdelivr的cdn，如果有版本号会匹配成“mailto:xxx”从而导致显示异常
         mdEditor.settings.emailLink=false;
         mdEditor.settings.atLink=false;
-        //开启html标签解析
-        mdEditor.settings.htmlDecode=false;        
+        mdEditor.settings.emoji=true
+        mdEditor.settings.taskList=true;// 默认不解析
+        mdEditor.settings.tex=true;// 默认不解析
+        mdEditor.settings.flowChart=true; // 默认不解析
+        mdEditor.settings.sequenceDiagram=true;// 默认不解析
+        
+        //开启全局html标签解析-不推荐
+        //mdEditor.settings.htmlDecode=true;
+        
+        window.mdEditor=mdEditor;        
+        //editormd工具栏上添加html标签解析开关
+        mdEditor.getToolbarHandles().parseHtml=function(){
+            let ele = $(".editormd-menu li a i:last");
+            if(ele.hasClass('fa-toggle-off')){
+                ele.removeClass('fa-toggle-off').addClass('fa-toggle-on');
+                mdEditor.settings.htmlDecode = true;
+            }else if(ele.hasClass('fa-toggle-on')){
+                ele.removeClass('fa-toggle-on').addClass('fa-toggle-off')
+                mdEditor.settings.htmlDecode = false;
+            }
+            mdEditor.setMarkdown(mdEditor.getMarkdown());
+        }
+        setTimeout(function(){
+            $(".editormd-menu").append('<li class="divider" unselectable="on">|</li><li><a href="javascript:;" title="解析HTML标签" unselectable="on"><i class="fa fa-toggle-off" name="parseHtml" unselectable="on"> 解析HTML标签 </i></a></li>')
+            mdEditor.setToolbarHandler(mdEditor.getToolbarHandles())
+        },300)        
+        
         //默认图片，工具：https://tool.lu/imageholder/
         if($('#img').val()=="")$('#img').val('https://cdn.jsdelivr.net/gh/Arronlong/cdn@master/cfblog/cfblog-plus.png');
         //默认时间设置为当前时间
@@ -152,6 +177,28 @@ async function getKV(key, toJson=false){
   }
 }
 
+async function getArticlesList(){
+  return await getKV("SYSTEM_INDEX_LIST", true);
+}
+async function getIndexNum(){
+  return await getKV("SYSTEM_INDEX_NUM", true);
+}
+async function getWidgetMenu(){
+  return await getKV("SYSTEM_VALUE_WidgetMenu", true);
+}
+async function getWidgetCategory(){
+  return await getKV("SYSTEM_VALUE_WidgetCategory", true);
+}
+async function getWidgetLink(){
+  return await getKV("SYSTEM_VALUE_WidgetLink", true);
+}
+async function getWidgetTags(){
+  return await getKV("SYSTEM_VALUE_WidgetTags", true);
+}
+async function getArticle(id){
+  return await getKV(id, true);
+}
+
 //写入kv，value如果未对象类型（数组或者json对象）需要序列化为字符串
 async function saveKV(key,value){
     if(null!=value){
@@ -163,19 +210,40 @@ async function saveKV(key,value){
     }
     return false;
 }
+async function saveArticlesList(value){
+  return await saveKV("SYSTEM_INDEX_LIST",value);
+}
+async function saveIndexNum(value){
+  return await saveKV("SYSTEM_INDEX_NUM", value);
+}
+async function saveWidgetMenu(){
+  return await saveKV("SYSTEM_VALUE_WidgetMenu", value);
+}
+async function saveWidgetCategory(){
+  return await saveKV("SYSTEM_VALUE_WidgetCategory", value);
+}
+async function saveWidgetLink(){
+  return await saveKV("SYSTEM_VALUE_WidgetLink", value);
+}
+async function saveWidgetTags(){
+  return await saveKV("SYSTEM_VALUE_WidgetTags", value);
+}
+async function saveArticle(id,value){
+  return await saveKV(id, value);
+}
 
 //根据文章id，返回上篇、下篇文章
 async function getSiblingArticle(id){
     id=("00000"+parseInt(id)).substr(-6);
     //读取文章列表，查找指定id的文章
-    let articles_all=await getKV("SYSTEM_INDEX_LIST", true),
+    let articles_all=await getArticlesList(),
         article_idx=-1;
     for(var i=0,len=articles_all.length;i<len;i++)
     if(articles_all[i].id==id){
         article_idx=i;
         break
     }
-    let value=await getKV(id,true);
+    let value=await getArticle(id);
     return null==value||0===value.length?[void 0,void 0,void 0]:[articles_all[article_idx-1],value,articles_all[article_idx+1]]
 }
 
@@ -198,7 +266,7 @@ async function purge(cacheZoneId=ACCOUNT.cacheZoneId,cacheToken=ACCOUNT.cacheTok
 //后台-翻页，返回[文章列表,是否无下一页]
 async function admin_nextPage(pageNo,pageSize=OPT.pageSize){
     pageNo=pageNo<=1?1:pageNo;
-    let articles_all=await getKV("SYSTEM_INDEX_LIST",true),
+    let articles_all=await getArticlesList(),
         articles=[];
     for(var i=(pageNo-1)*pageSize,s=Math.min(pageNo*pageSize,articles_all.length);i<s;i++){
         articles.push(articles_all[i]);
@@ -248,12 +316,12 @@ async function parseReq(request){
 //为文章分配ID
 async function generateId(){
     //KV中读取文章数量（初始化为1），并格式化为6位，不足6位前面补零
-    let article_id_seq=await getKV("SYSTEM_INDEX_NUM");
+    let article_id_seq=await getIndexNum();
     if(""===article_id_seq||null===article_id_seq||"[]"===article_id_seq||void 0===article_id_seq){
-        await saveKV("SYSTEM_INDEX_NUM",1)
+        await saveIndexNum(1)
         return "000001"
     }else{
-        await saveKV("SYSTEM_INDEX_NUM", parseInt(article_id_seq)+1)
+        await saveIndexNum(parseInt(article_id_seq)+1)
         return ("00000"+(parseInt(article_id_seq)+1)).substr(-6)
     }
 }
@@ -274,7 +342,7 @@ function parseBasicAuth(request){
 async function getSiteMap(){
     console.log("进入函数 getSiteMap");
     //读取文章列表，并按照特定的xml格式进行组装
-    let articles_all=await getKV("SYSTEM_INDEX_LIST", true),
+    let articles_all=await getArticlesList(),
         e='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
     for(var i=0;i<articles_all.length;i++){
         e+="\n\t<url>",
@@ -316,7 +384,7 @@ async function handle_robots(request){
 //访问: sitemap.xml
 async function handle_sitemap(request){
     //读取文章列表，并按照特定的xml格式进行组装
-    let articles_all=await getKV("SYSTEM_INDEX_LIST", true)
+    let articles_all=await getArticlesList()
     let xml='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
     for(var i=0;i<articles_all.length;i++){
         xml+="\n\t<url>",
@@ -356,11 +424,11 @@ async function renderBlog(url){
     //获取主页模板源码
     let theme_html=await getThemeHtml("index"),
         //KV中读取导航栏、分类目录、标签、链接、所有文章、近期文章等配置信息
-        menus=await getKV("SYSTEM_VALUE_WidgetMenu",true),
-        categories=await getKV("SYSTEM_VALUE_WidgetCategory",true),
-        tags=await getKV("SYSTEM_VALUE_WidgetTags",true),
-        links=await getKV("SYSTEM_VALUE_WidgetLink",true),
-        articles_all=await getKV("SYSTEM_INDEX_LIST", true),
+        menus=await getWidgetMenu(),
+        categories=await getWidgetCategory(),
+        tags=await getWidgetTags(),
+        links=await getWidgetLink(),
+        articles_all=await getArticlesList(),
         articles_recently=articles_all.slice(0,OPT.recentlySize);
     
     for(var i=0;i<articles_recently.length;i++){
@@ -467,11 +535,11 @@ async function handle_article(id){
     //获取内容页模板源码
     let theme_html=await getThemeHtml("article"),
         //KV中读取导航栏、分类目录、标签、链接、近期文章等配置信息
-        menus=await getKV("SYSTEM_VALUE_WidgetMenu",true),
-        categories=await getKV("SYSTEM_VALUE_WidgetCategory",true),
-        tags=await getKV("SYSTEM_VALUE_WidgetTags",true),
-        links=await getKV("SYSTEM_VALUE_WidgetLink",true),
-        articles_recently=(await getKV("SYSTEM_INDEX_LIST", true)).slice(0,OPT.recentlySize);
+        menus=await getWidgetMenu(),
+        categories=await getWidgetCategory(),
+        tags=await getWidgetTags(),
+        links=await getWidgetLink(),
+        articles_recently=(await getArticlesList()).slice(0,OPT.recentlySize);
     
     for(var i=0;i<articles_recently.length;i++){
         //调整文章的日期(yyyy-MM-dd)和url
@@ -536,9 +604,9 @@ async function handle_admin(request){
         //读取主题的admin/index.html源码
         let theme_html=await getThemeHtml("admin/index"),
             //KV中读取导航栏、分类目录、链接、近期文章等配置信息
-            categoryJson=await getKV("SYSTEM_VALUE_WidgetCategory",true),
-            menuJson=await getKV("SYSTEM_VALUE_WidgetMenu",true),
-            linkJson=await getKV("SYSTEM_VALUE_WidgetLink",true);
+            categoryJson=await getWidgetCategory(),
+            menuJson=await getWidgetMenu(),
+            linkJson=await getWidgetLink();
         
         //手动替换<!--{xxx}-->格式的参数
         html = theme_html.replaceHtmlPara("categoryJson",JSON.stringify(categoryJson))
@@ -549,7 +617,7 @@ async function handle_admin(request){
     //发布
     if("publish"==paths[1]){
         //KV中获取文章列表
-        let articles_all=await getKV("SYSTEM_INDEX_LIST", true),
+        let articles_all=await getArticlesList(),
             tags=[]; //操作标签
         
         //遍历所有文章，汇集所有的tag
@@ -568,7 +636,7 @@ async function handle_admin(request){
         }
         console.log(articles_all)
         //将所有标签一次性写入到KV中，并清除缓存
-        await saveKV("SYSTEM_VALUE_WidgetTags",JSON.stringify(tags))
+        await saveW("SYSTEM_VALUE_WidgetTags",JSON.stringify(tags))
         
         json = await purge()?'{"msg":"published ,purge Cache true","rst":true}':'{"msg":"published ,buuuuuuuuuuuut purge Cache false !!!!!!","rst":true}'
         
@@ -588,9 +656,9 @@ async function handle_admin(request){
             //获取主题admin/edit源码
             theme_html=await getThemeHtml("admin/edit"),
             //KV中读取分类
-            categoryJson=await getKV("SYSTEM_VALUE_WidgetCategory"),
+            categoryJson=JSON.stringify(await getWidgetCategory()),
             //KV中读取文章内容
-            articleJson=await getKV(id);
+            articleJson=JSON.stringify(await getArticle(id));
         
         //手动替换<!--{xxx}-->格式的参数
         html = theme_html.replaceHtmlPara("categoryJson",categoryJson).replaceHtmlPara("articleJson",articleJson.replaceAll("script>","script＞"))
@@ -606,9 +674,9 @@ async function handle_admin(request){
         
         //判断格式，写入分类、导航、链接到KV中
         if(checkFormat(widgetCategory) && checkFormat(widgetMenu) && checkFormat(widgetLink)){
-            let success = await saveKV("SYSTEM_VALUE_WidgetCategory", widgetCategory)
-            success = success && await saveKV("SYSTEM_VALUE_WidgetMenu", widgetMenu)
-            success = success && await saveKV("SYSTEM_VALUE_WidgetLink", widgetLink)
+            let success = await saveWidgetCategory(widgetCategory)
+            success = success && await saveWidgetMenu(widgetMenu)
+            success = success && await saveWidgetLink(widgetLink)
             json = success ? '{"msg":"saved","rst":true}' : '{"msg":"Save Faild!!!","ret":false}'
         }else{
             json = '{"msg":"Not a JSON object","rst":false}'
@@ -625,7 +693,7 @@ async function handle_admin(request){
                 keys=Object.keys(importJson);
             for(let i=0;i<keys.length;++i){
                 console.log(keys[i],importJson[keys[i]]),
-                await saveKV(keys[i],importJson[keys[i]]);
+                await saveArticle(keys[i],importJson[keys[i]]);
             }
             json = '{"msg":"import success!","rst":true}'
         }else{
@@ -675,7 +743,7 @@ async function handle_admin(request){
             };
             
             //将文章json写入KV（key为文章id，value为文章json字符串）
-            await saveKV(id,JSON.stringify(article));
+            await saveArticle(id,JSON.stringify(article));
             
             //组装文章json
             let articleWithoutHtml={
@@ -690,14 +758,14 @@ async function handle_admin(request){
                     priority:priority,
                     changefreq:changefreq
                 },
-                articles_all_old=await getKV("SYSTEM_INDEX_LIST", true),//读取文章列表
+                articles_all_old=await getArticlesList(),//读取文章列表
                 articles_all=[];
             
             //将最新的文章写入文章列表中，并按id排序后，再次回写到KV中
             articles_all.push(articleWithoutHtml),
             articles_all=articles_all.concat(articles_all_old),
             articles_all=sort(articles_all,"id"),
-            await saveKV("SYSTEM_INDEX_LIST",JSON.stringify(articles_all))
+            await saveArticle("SYSTEM_INDEX_LIST",JSON.stringify(articles_all))
             
             json = '{"msg":"added OK","rst":true,"id":"'+id+'"}'
         }else{
@@ -710,12 +778,12 @@ async function handle_admin(request){
         let t=paths[2];
         if(6==t.length){
             await CFBLOG.delete(t);
-            let e=await getKV("SYSTEM_INDEX_LIST", true);
+            let e=await getArticlesList();
             for(r=0;r<e.length;r++){
                 if(t==e[r].id){
                     e.splice(r,1);
                 }
-                await saveKV("SYSTEM_INDEX_LIST",JSON.stringify(e))
+                await saveArticlesList(JSON.stringify(e))
                 json = '{"msg":"Delete ('+t+')  OK","rst":true,"id":"'+t+'"}'
             }
         }else{
@@ -764,7 +832,7 @@ async function handle_admin(request){
             };
             
             //将文章json写入KV（key为文章id，value为文章json字符串）
-            await saveKV(id,JSON.stringify(article));
+            await saveArticle(id,JSON.stringify(article));
             
             //组装文章json
             let articleWithoutHtml={
@@ -779,7 +847,7 @@ async function handle_admin(request){
                     priority:priority,
                     changefreq:changefreq
                 },
-                articles_all=await getKV("SYSTEM_INDEX_LIST", true);//读取文章列表
+                articles_all=await getArticlesList();//读取文章列表
             console.log(articles_all)
             //将原对象删掉，将最新的文章加入文章列表中，并重新按id排序后，再次回写到KV中
             for(var i=articles_all.length-1;i>=0;i--){//按索引删除，要倒序，否则索引值会变
@@ -789,7 +857,7 @@ async function handle_admin(request){
             }
             articles_all.push(articleWithoutHtml),
             articles_all=sort(articles_all,"id"),
-            await saveKV("SYSTEM_INDEX_LIST",JSON.stringify(articles_all))
+            await saveArticlesList(JSON.stringify(articles_all))
             json = '{"msg":"Edit OK","rst":true,"id":"'+id+'"}'
         }else{
             json = '{"msg":"信息不全","rst":false}'
