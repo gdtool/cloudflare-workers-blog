@@ -60,7 +60,7 @@
 	</div>
 	<div class="tab-pane fade in active" id="new">
 		<div class="container">
-			<h3 id="labelNew">新增</h3>   
+			<h3 id="labelNew">新增<span style="color: red;">*</span></h3>   
 			<form id="addNewForm"  class="form-inline" >
 				<div class="form-group" style="width: 98%">
 					<input type="hidden" class="form-control" name="id" id="id" >
@@ -75,11 +75,11 @@
 					<input type="text" class="form-control" name="link" id="link" placeholder="" required="true">
 				</div>
 				<div class="form-group">
-					<label for="exampleInputEmail2">创建日期</label>
+					<label for="exampleInputEmail2">创建日期<span style="color: red;">*</span></label>
 					<input type="datetime-local" class="form-control" id="createDate" name="createDate" placeholder=""  required="true">
 				</div>
 				<div class="form-group">
-					<label for="exampleInputEmail2">分类</label>
+					<label for="exampleInputEmail2">分类<span style="color: red;">*</span></label>
 					<select class="selectpicker" multiple name="category[]" id="category">
 					</select>
 				</div>
@@ -225,8 +225,9 @@
     function saveAddNew(){
         if(
             $('#WidgetMenu').val() == "" || $('#WidgetMenu').val() == null
+            || $('#title').val() == "" || $('#title').val() == null
             || $('#createDate').val() == "" || $('#createDate').val() == null
-            || $('#createDate').val() == "" || $('#createDate').val() == null
+            || $('#category').val() == "" || $('#category').val() == null
         
         ){
            alert("信息不全");
@@ -243,15 +244,15 @@
 			contentType: "application/json; charset=utf-8",
 			data: JSON.stringify($("#addNewForm").serializeArray()), 
             success: function (result) {
-                if ("id" in result){
+                if("msg" in result){
+                  if ("id" in result){
                     $('#id').val(result.id);
-					$('#labelNew').text("编辑:"+result.id);
-                    alert(result.msg);
+                    $('#labelNew').text("编辑:"+result.id);
+                  }
+                  alert(result.msg);
+                }else {
+                  alert("失败");
                 }
-                else 
-                {
-					alert("失败");
-				}
             }
         });
     }
