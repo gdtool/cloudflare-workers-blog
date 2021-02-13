@@ -216,16 +216,16 @@ async function saveArticlesList(value){
 async function saveIndexNum(value){
   return await saveKV("SYSTEM_INDEX_NUM", value);
 }
-async function saveWidgetMenu(){
+async function saveWidgetMenu(value){
   return await saveKV("SYSTEM_VALUE_WidgetMenu", value);
 }
-async function saveWidgetCategory(){
+async function saveWidgetCategory(value){
   return await saveKV("SYSTEM_VALUE_WidgetCategory", value);
 }
-async function saveWidgetLink(){
+async function saveWidgetLink(value){
   return await saveKV("SYSTEM_VALUE_WidgetLink", value);
 }
-async function saveWidgetTags(){
+async function saveWidgetTags(value){
   return await saveKV("SYSTEM_VALUE_WidgetTags", value);
 }
 async function saveArticle(id,value){
@@ -636,7 +636,7 @@ async function handle_admin(request){
         }
         console.log(articles_all)
         //将所有标签一次性写入到KV中，并清除缓存
-        await saveW("SYSTEM_VALUE_WidgetTags",JSON.stringify(tags))
+        await saveWidgetTags(JSON.stringify(tags))
         
         json = await purge()?'{"msg":"published ,purge Cache true","rst":true}':'{"msg":"published ,buuuuuuuuuuuut purge Cache false !!!!!!","rst":true}'
         
@@ -765,7 +765,7 @@ async function handle_admin(request){
             articles_all.push(articleWithoutHtml),
             articles_all=articles_all.concat(articles_all_old),
             articles_all=sort(articles_all,"id"),
-            await saveArticle("SYSTEM_INDEX_LIST",JSON.stringify(articles_all))
+            await saveArticlesList(JSON.stringify(articles_all))
             
             json = '{"msg":"added OK","rst":true,"id":"'+id+'"}'
         }else{
