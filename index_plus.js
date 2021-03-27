@@ -14,14 +14,41 @@ const OPT = { //网站配置
     "siteName" : "CFBLOG-Plus",//博客名称
     "siteDescription":"CFBLOG-Plus" ,//博客描述
     "keyWords":"cloudflare,KV,workers,blog",//关键字
-    "logo":"//cdn.jsdelivr.net/gh/Arronlong/cfblog-plus@master/themes/JustNews/files/logo2.png",//JustNews主题的logo
+    "logo":"https://cdn.jsdelivr.net/gh/Arronlong/cfblog-plus@master/themes/JustNews/files/logo2.png",//JustNews主题的logo
 
     //主题路径
-    "theme_github_path":"//cdn.jsdelivr.net/gh/Arronlong/cfblog-plus@master/themes/",
+    "theme_github_path":"https://cdn.jsdelivr.net/gh/Arronlong/cfblog-plus@master/themes/",
+    "top_flag":'<topflag>[置顶]</topflag>',
     "editor_page_scripts": `
+        //置顶设置
+        let top_setting=\`
+          <div class="form-group">
+            <label for="exampleInputEmail2">是否置顶</label>
+            <input type="hidden" class="form-control" id="top_timestamp" name="top_timestamp">
+            <select class="form-control" id="istop" name="istop">
+              <option value="0" selected >否</option>
+              <option value="1" >是</option>
+            </select>
+          </div>\`
+        $('div.form-group').last().after(top_setting);//添加置顶设置
+        $("#istop").change(function(){
+          $("#top_timestamp").val($(this).val()*1?new Date().getTime():0);
+        });
+        if(location.pathname.startsWith('/admin/edit')){//修改文章页面，自动设置置顶
+          $("#istop").val(articleJson.top_timestamp?1:0);
+          $("#top_timestamp").val(articleJson.top_timestamp?articleJson.top_timestamp:0);
+        }
+        $("#istop").trigger('change')
         //关闭email匹配和@匹配，否则图片使用jsdelivr的cdn，如果有版本号会匹配成“mailto:xxx”从而导致显示异常
         mdEditor.settings.emailLink=false;
         mdEditor.settings.atLink=false;
+
+        //mdEditor.settings.toc=false
+        //mdEditor.settings.tocm=true    // Using [TOCM]
+        //mdEditor.settings.tocContainer="#custom-toc-container" // 自定义 ToC 容器层
+        //mdEditor.settings.gfm=false
+        //mdEditor.settings.tocDropdown=true
+        //mdEditor.settings.markdownSourceCode=true // 是否保留 Markdown 源码，即是否删除保存源码的 Textarea 标签
         mdEditor.settings.emoji=true
         mdEditor.settings.taskList=true;// 默认不解析
         mdEditor.settings.tex=true;// 默认不解析
@@ -47,10 +74,10 @@ const OPT = { //网站配置
         setTimeout(function(){
             $(".editormd-menu").append('<li class="divider" unselectable="on">|</li><li><a href="javascript:;" title="解析HTML标签" unselectable="on"><i class="fa fa-toggle-off" name="parseHtml" unselectable="on"> 解析HTML标签 </i></a></li>')
             mdEditor.setToolbarHandler(mdEditor.getToolbarHandles())
-        },300)        
-        
+        },300)
+
         //默认图片，工具：https://tool.lu/imageholder/
-        if($('#img').val()=="")$('#img').val('https://cdn.jsdelivr.net/gh/Arronlong/cdn@master/cfblog/cfblog-plus.png');
+        if($('#img').val()=="")$('#img').val('https://cdn.jsdelivr.net/gh/Arronlong/cdn@master/cfblog/cfblog-article-img.png');
         //默认时间设置为当前时间
         if($('#createDate').val()=="")$('#createDate').val(new Date(new Date().getTime()+8*60*60*1000).toJSON().substr(0,16));
         `, //后台编辑页面脚本
@@ -80,7 +107,6 @@ const OPT = { //网站配置
     "robots":`User-agent: *
 Disallow: /admin`//robots.txt设置
 };
-
 
 //CFBLOG 通用变量
 this.CFBLOG = ACCOUNT.kv_var;
@@ -121,8 +147,8 @@ function pad(t){
 //排序（默认倒序）
 function sort(arr, field, desc=true){
     return arr.sort((function(m,n){
-        var a=m[field],
-            b=n[field];
+        var a=m[field]||'0',
+            b=n[field]||'0';
         return desc?(a>b?-1:(a<b?1:0)):(a<b?-1:(a>b?1:0))
     }))
 }
@@ -176,7 +202,9 @@ async function getKV(key, toJson=false){
     return[]
   }
 }
-
+function sortArticle(articles){
+  return sort(sort(articles,'id'),'top_timestamp');
+}
 async function getArticlesList(){
   return await getKV("SYSTEM_INDEX_LIST", true);
 }
@@ -269,9 +297,12 @@ async function admin_nextPage(pageNo,pageSize=OPT.pageSize){
     let articles_all=await getArticlesList(),
         articles=[];
     for(var i=(pageNo-1)*pageSize,s=Math.min(pageNo*pageSize,articles_all.length);i<s;i++){
-        articles.push(articles_all[i]);
+      if(articles_all[i].top_timestamp && !articles_all[i].title.startsWith(OPT.top_flag)){
+        articles_all[i].title = OPT.top_flag + articles_all[i].title
+      }
+      articles.push(articles_all[i]);
     }
-    articles=sort(articles,"id");
+    //articles=sortArticle(articles);
     return articles
 }
 
@@ -282,7 +313,7 @@ async function parseReq(request){
     if(content_type.includes("application/json")){
     let json=JSON.stringify(await request.json()),
         content_type=JSON.parse(json),
-        settings={category:[]};
+        settings={category:[],top_timestamp:0};
         for(var i=0;i<content_type.length;i++){
             if("tags"==content_type[i].name){//标签，用逗号分隔
                 settings[content_type[i].name]=content_type[i].value.split(",")
@@ -433,6 +464,9 @@ async function renderBlog(url){
     
     for(var i=0;i<articles_recently.length;i++){
         //调整文章的日期(yyyy-MM-dd)和url
+      if(articles_recently[i].top_timestamp && !articles_recently[i].title.startsWith(OPT.top_flag)){
+          articles_recently[i].title = OPT.top_flag + articles_recently[i].title
+        }
         articles_recently[i].createDate10=articles_recently[i].createDate.substr(0,10),
         articles_recently[i].url="/article/"+articles_recently[i].id+"/"+articles_recently[i].link+".html";
     }
@@ -478,6 +512,9 @@ async function renderBlog(url){
     // console.log(articles_show)
     for(i=0;i<articles_show.length;i++){
         //调整文章的日期(yyyy-MM-dd)、年、月、日、内容长度和url
+        if(articles_show[i].top_timestamp && !articles_show[i].title.startsWith(OPT.top_flag)){
+          articles_show[i].title = OPT.top_flag + articles_show[i].title
+        }
         articles_show[i].createDate10=articles_show[i].createDate.substr(0,10),
         articles_show[i].createDateYear=articles_show[i].createDate.substr(0,4),
         articles_show[i].createDateMonth=articles_show[i].createDate.substr(5,7),
@@ -543,6 +580,9 @@ async function handle_article(id){
     
     for(var i=0;i<articles_recently.length;i++){
         //调整文章的日期(yyyy-MM-dd)和url
+        if(articles_recently[i].top_timestamp && !articles_recently[i].title.startsWith(OPT.top_flag)){
+          articles_recently[i].title = OPT.top_flag + articles_recently[i].title
+        }
         articles_recently[i].createDate10=articles_recently[i].createDate.substr(0,10),
         articles_recently[i].url="/article/"+articles_recently[i].id+"/"+articles_recently[i].link+".html";
     }
@@ -552,6 +592,9 @@ async function handle_article(id){
     for(i=0;i<articles_sibling.length;i++){
         //调整文章的日期(yyyy-MM-dd)、文章长度和url
         if(articles_sibling[i]){
+            if(articles_sibling[i].top_timestamp && !articles_sibling[i].title.startsWith(OPT.top_flag)){
+              articles_sibling[i].title = OPT.top_flag + articles_sibling[i].title
+            }
             //调整文章的日期(yyyy-MM-dd)、年、月、日、内容长度和url
             articles_sibling[i].createDate10=articles_sibling[i].createDate.substr(0,10),
             articles_sibling[i].createDateYear=articles_sibling[i].createDate.substr(0,4),
@@ -671,7 +714,6 @@ async function handle_admin(request){
             widgetMenu=ret.WidgetMenu,//导航
             widgetLink=ret.WidgetLink;//链接
         
-        
         //判断格式，写入分类、导航、链接到KV中
         if(checkFormat(widgetCategory) && checkFormat(widgetMenu) && checkFormat(widgetLink)){
             let success = await saveWidgetCategory(widgetCategory)
@@ -715,6 +757,7 @@ async function handle_admin(request){
             contentMD=ret["content-markdown-doc"],//文章内容-md格式
             contentHtml=ret["content-html-code"],//文章内容-html格式
             contentText="",//文章摘要
+            top_timestamp=ret.top_timestamp*1,//置顶时间戳，不置顶时为0
             id="";//文章id
         
         //校验参数完整性
@@ -739,6 +782,7 @@ async function handle_admin(request){
                 contentHtml:contentHtml,
                 contentText:contentText,
                 priority:priority,
+                top_timestamp:top_timestamp,
                 changefreq:changefreq
             };
             
@@ -756,6 +800,7 @@ async function handle_admin(request){
                     tags:tags,
                     contentText:contentText,
                     priority:priority,
+                    top_timestamp:top_timestamp,
                     changefreq:changefreq
                 },
                 articles_all_old=await getArticlesList(),//读取文章列表
@@ -764,7 +809,7 @@ async function handle_admin(request){
             //将最新的文章写入文章列表中，并按id排序后，再次回写到KV中
             articles_all.push(articleWithoutHtml),
             articles_all=articles_all.concat(articles_all_old),
-            articles_all=sort(articles_all,"id"),
+            articles_all=sortArticle(articles_all),
             await saveArticlesList(JSON.stringify(articles_all))
             
             json = '{"msg":"added OK","rst":true,"id":"'+id+'"}'
@@ -775,19 +820,19 @@ async function handle_admin(request){
     
     //删除
     if("delete"==paths[1]){
-        let t=paths[2];
-        if(6==t.length){
-            await CFBLOG.delete(t);
+        let id=paths[2]
+        if(6==id.length){
+            await CFBLOG.delete(id);
             let e=await getArticlesList();
             for(r=0;r<e.length;r++){
-                if(t==e[r].id){
+                if(id==e[r].id){
                     e.splice(r,1);
                 }
                 await saveArticlesList(JSON.stringify(e))
-                json = '{"msg":"Delete ('+t+')  OK","rst":true,"id":"'+t+'"}'
+                json = '{"msg":"Delete ('+id+')  OK","rst":true,"id":"'+id+'"}'
             }
         }else{
-            json = '{"msg":"Delete  false ","rst":false,"id":"'+t+'"}'
+            json = '{"msg":"Delete  false ","rst":false,"id":"'+id+'"}'
         }
     }
     
@@ -805,6 +850,7 @@ async function handle_admin(request){
             contentMD=ret["content-markdown-doc"],//文章内容-md格式
             contentHtml=ret["content-html-code"],//文章内容-html格式
             contentText="",//文章摘要
+            top_timestamp=ret.top_timestamp*1,//置顶则设置时间戳,不置顶时为0
             id=ret.id;//文章id
             
         //校验参数完整性
@@ -828,6 +874,7 @@ async function handle_admin(request){
                 contentHtml:contentHtml,
                 contentText:contentText,
                 priority:priority,
+                top_timestamp:top_timestamp,
                 changefreq:changefreq
             };
             
@@ -845,6 +892,7 @@ async function handle_admin(request){
                     tags:tags,
                     contentText:contentText,
                     priority:priority,
+                    top_timestamp:top_timestamp,
                     changefreq:changefreq
                 },
                 articles_all=await getArticlesList();//读取文章列表
@@ -856,7 +904,7 @@ async function handle_admin(request){
                 }
             }
             articles_all.push(articleWithoutHtml),
-            articles_all=sort(articles_all,"id"),
+            articles_all=sortArticle(articles_all),
             await saveArticlesList(JSON.stringify(articles_all))
             json = '{"msg":"Edit OK","rst":true,"id":"'+id+'"}'
         }else{
