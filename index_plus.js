@@ -18,7 +18,8 @@ const OPT = { //网站配置
 
     //主题路径
     "theme_github_path":"https://cdn.jsdelivr.net/gh/Arronlong/cfblog-plus@master/themes/",
-    "top_flag":'<topflag>[置顶]</topflag>',
+    "top_flag":'<topflag>[置顶]</topflag>',//置顶标志
+    "admin_home_idx": 1, //后台首页tab索引设置：1-我的文章,2-新建,3-设置,4-发布
     "editor_page_scripts": `
         //置顶设置
         let top_setting=\`
@@ -655,6 +656,11 @@ async function handle_admin(request){
         html = theme_html.replaceHtmlPara("categoryJson",JSON.stringify(categoryJson))
                         .replaceHtmlPara("menuJson",JSON.stringify(menuJson))
                         .replaceHtmlPara("linkJson",JSON.stringify(linkJson))
+                        
+        //添加后台首页配置
+        if(OPT.admin_home_idx && OPT.admin_home_idx>=1 && OPT.admin_home_idx<=4){
+          html = html.replace("$('#myTab li:eq(0) 1').tab('show')","$('#myTab a:eq("+OPT.admin_home_idx+")').tab('show')")
+        }
     }
 
     //发布

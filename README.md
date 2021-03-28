@@ -6,6 +6,7 @@
 2. 扩展md编辑器配置，可以自行根据需要修改配置。目前可配置支持html标签解析（默认关闭），更多设置参考[editormd官网](https://pandao.github.io/editor.md/)
 3. 后台新建页和编辑页，自动设置时间和默认图片(使用JustNews主题时必须设置，否则样式大变)，默认图片为：![](https://cdn.jsdelivr.net/gh/Arronlong/cdn@master/cfblog/cfblog-plus.png)
 4. 添加文章置顶设置功能
+5. 添加后台首页选择功能
 
 
 一些功能还在规划中：
