@@ -187,6 +187,11 @@ function sort(arr, field, desc=true){
     }))
 }
 
+//undefined转空字符串
+function nullToEmpty(k){
+  return k==undefined?'':k
+}
+
 //判断格式:字符串是否为json，或者参数是否为对象
 function checkFormat(t){
     if("string"==typeof t){
@@ -239,6 +244,7 @@ async function getKV(key, toJson=false){
 function sortArticle(articles){
   return sort(sort(articles,'id'),'top_timestamp');
 }
+//前台获取所有公开文章
 async function getArticlesList(){
   let articles_all = await getAllArticlesList();
   
@@ -248,6 +254,7 @@ async function getArticlesList(){
     }
   return articles_all;
 }
+//前台获取所有文章（含公开+隐藏）
 async function getAllArticlesList(){
   return await getKV("SYSTEM_INDEX_LIST", true);
 }
@@ -655,7 +662,7 @@ async function handle_article(id){
     let article=articles_sibling[1];
 
     //组装文章详情页各参数
-    let title=article.title+" - "+OPT.siteName, 
+    let title=article.title.replace(nullToEmpty(OPT.top_flag),'').replace(nullToEmpty(OPT.hidden_flag),'')+" - "+OPT.siteName, 
         keyWord=article.tags.concat(article.category).join(","),
         cfg={};
     cfg.widgetMenuList=menus,//导航
