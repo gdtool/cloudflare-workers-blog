@@ -93,6 +93,8 @@ Disallow: /admin`,//robots.txt设置
         if(location.pathname.startsWith('/admin/edit')){//修改文章页面，自动设置隐藏
           $("#hidden").val(articleJson.hidden?1:0);
         }
+        let searchxml=\`<a  tabindex="0"  role="button"  type="submit" id="btn_export" class="btn btn-default"  href="/admin/search.xml" >导出search.xml</a>\`
+        $('form#importForm a').last().after(searchxml);//设置页面添加导出search.xml导出按钮
         //关闭email匹配和@匹配，否则图片使用jsdelivr的cdn，如果有版本号会匹配成“mailto:xxx”从而导致显示异常
         mdEditor.settings.emailLink=false;
         mdEditor.settings.atLink=false;
@@ -823,6 +825,27 @@ async function handle_admin(request){
       file = JSON.stringify(articles)
     }
     
+    //导出search.xml 
+    if("search.xml"===paths[1]){
+      console.log("开始导出");
+      //读取文章列表，并按照特定的xml格式进行组装
+      let articles_all=await getArticlesList()
+      let xml='<?xml version="1.0" encoding="UTF-8"?>\n<blogs>';
+      for(var i=0;i<articles_all.length;i++){
+          xml+="\n\t<blog>",
+          xml+="\n\t\t<title>"+articles_all[i].title+"</title>";
+          let article = await getArticle(articles_all[i].id);
+          if(null != article){
+            xml+="\n\t\t<content>"+article.contentMD.replaceAll('<','&lt;').replaceAll('>','&gt;')+"</content>"
+          }
+          xml+="\n\t\t<url>https://"+OPT.siteDomain+"/article/"+articles_all[i].id+"/"+articles_all[i].link+".html</url>",
+          xml+="\n\t\t<time>"+articles_all[i].createDate.substr(0,10)+"</time>",
+          xml+="\n\t</blog>";
+      }
+      xml+="\n</blogs>"
+      file = xml
+    }
+    
     //新建文章
     if("saveAddNew"==paths[1]){
         const ret=await parseReq(request);
@@ -1015,7 +1038,7 @@ async function handle_admin(request){
       return new Response(file,{
         headers:{
           "content-type":"application/octet-stream;charset=utf-8",
-          "Content-Disposition":"attachment; filename=cfblog-"+new Date().getTime()+".json"
+          "Content-Disposition":"attachment; filename="+(checkFormat(file)? "cfblog-"+new Date().getTime()+".json":"search.xml")
         },
         status:200
       })
