@@ -71,7 +71,7 @@ Disallow: /admin`,//robots.txt设置
               <option value="1" >是</option>
             </select>
           </div>\`
-        $('div.form-group').last().after(top_setting);//添加置顶设置
+        $('form#addNewForm div.form-group,form#editForm div.form-group').last().after(top_setting);//新建和编辑页面添加置顶设置
         $("#istop").change(function(){
           $("#top_timestamp").val($(this).val()*1?new Date().getTime():0);
         });
@@ -89,7 +89,7 @@ Disallow: /admin`,//robots.txt设置
               <option value="1" >是</option>
             </select>
           </div>\`
-        $('div.form-group').last().after(hidden_setting);//添加隐藏设置
+        $('form#addNewForm div.form-group,form#editForm div.form-group').last().after(hidden_setting);//新建和编辑页面添加隐藏设置
         if(location.pathname.startsWith('/admin/edit')){//修改文章页面，自动设置隐藏
           $("#hidden").val(articleJson.hidden?1:0);
         }
@@ -422,23 +422,6 @@ function parseBasicAuth(request){
     return user===ACCOUNT.user && pwd===ACCOUNT.password
 }
 
-//请求sitemap.xml
-async function getSiteMap(){
-    console.log("进入函数 getSiteMap");
-    //读取文章列表，并按照特定的xml格式进行组装
-    let articles_all=await getArticlesList(),
-        e='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-    for(var i=0;i<articles_all.length;i++){
-        e+="\n\t<url>",
-        e+="\n\t\t<loc>https://"+OPT.siteDomain+"/article/"+articles_all[i].id+"/"+articles_all[i].link+".html</loc>",
-        e+="\n\t\t<lastmod>"+articles_all[i].createDate.substr(0,10)+"</lastmod>",
-        e+="\n\t\t<changefreq>"+(void 0===articles_all[i].changefreq?"daily":articles_all[i].changefreq)+"</changefreq>",
-        e+="\n\t\t<priority>"+(void 0===articles_all[i].priority?"0.5":articles_all[i].priority)+"</priority>",
-        e+="\n\t</url>";
-    }
-    return e+="\n</urlset>",e
-}
-
 //访问: favicon.ico
 async function handle_favicon(request){
     /*
@@ -486,6 +469,7 @@ async function handle_sitemap(request){
         status:200
     });
 }
+
 //渲染前端博客：指定一级路径page\tags\category，二级路径value，以及页码，默认第一页
 async function renderBlog(url){
     console.log("---进入renderBlog函数---，path=", url.href.substr(url.origin.length))
@@ -513,11 +497,12 @@ async function renderBlog(url){
         tags=await getWidgetTags(),
         links=await getWidgetLink(),
         articles_all=await getArticlesList(),
-        articles_recently=articles_all.slice(0,OPT.recentlySize);
+        //近期文章以最后修改时间排序
+        articles_recently=sort([].concat(articles_all),'modify_timestamp').slice(0,OPT.recentlySize);
     
     for(var i=0;i<articles_recently.length;i++){
         //调整文章的日期(yyyy-MM-dd)和url
-      if(articles_recently[i].top_timestamp && !articles_recently[i].title.startsWith(OPT.top_flag)){
+        if(articles_recently[i].top_timestamp && !articles_recently[i].title.startsWith(OPT.top_flag)){
           articles_recently[i].title = OPT.top_flag + articles_recently[i].title
         }
         articles_recently[i].createDate10=articles_recently[i].createDate.substr(0,10),
@@ -629,7 +614,8 @@ async function handle_article(id){
         categories=await getWidgetCategory(),
         tags=await getWidgetTags(),
         links=await getWidgetLink(),
-        articles_recently=(await getArticlesList()).slice(0,OPT.recentlySize);
+        //近期文章以最后修改时间排序
+        articles_recently=sort(await getArticlesList(),'modify_timestamp').slice(0,OPT.recentlySize);
     
     for(var i=0;i<articles_recently.length;i++){
         //调整文章的日期(yyyy-MM-dd)和url
@@ -694,7 +680,8 @@ async function handle_admin(request){
     let url = new URL(request.url),
         paths = url.pathname.trim("/").split("/"),
         html,//返回html
-        json;//返回json
+        json,//返回json
+        file;//返回文件
     //新建页
     if(1==paths.length||"list"==paths[1]){
         //读取主题的admin/index.html源码
@@ -809,13 +796,40 @@ async function handle_admin(request){
         }        
     }
     
+    //导出
+    if("export"===paths[1]){
+      console.log("开始导出");
+      async function exportArticle(arr=[],cursor="",limit=1){
+        //分页获取文章内容
+        const list=await CFBLOG.list({limit:limit,cursor:cursor});
+        if(!1 in list) return {};
+        arr=arr.concat(list.keys)
+        console.log("导出: ",typeof list, JSON.stringify(list))
+        //判断是否导出完毕
+        if(list.list_complete){
+          let ret = {OPT:OPT};
+          for(let i=0;i<arr.length;++i){
+            const article = await CFBLOG.get(arr[i].name);
+            if(null != article){
+              ret[arr[i].name] = checkFormat(article)?JSON.parse(article):article
+            }
+          }
+          return ret
+        }
+        return await exportArticle(arr,list.cursor,limit)
+      }
+      
+      let articles=await exportArticle();
+      file = JSON.stringify(articles)
+    }
+    
     //新建文章
     if("saveAddNew"==paths[1]){
         const ret=await parseReq(request);
         let title=ret.title,//文章标题
             img=ret.img,//插图
             link=ret.link,//永久链接
-            createDate=ret.createDate,//发布日期
+            createDate=ret.createDate.replace('T',' '),//发布日期
             category=ret.category,//分类
             tags=ret.tags,//标签
             priority=void 0===ret.priority?"0.5":ret.priority,//权重
@@ -824,6 +838,7 @@ async function handle_admin(request){
             contentHtml=ret["content-html-code"],//文章内容-html格式
             contentText="",//文章摘要
             top_timestamp=ret.top_timestamp*1,//置顶时间戳，不置顶时为0
+            modify_timestamp=new Date().getTime()+8*60*60*1000,//修改时间戳
             hidden=ret.hidden*1,//是否隐藏
             id="";//文章id
         
@@ -850,6 +865,7 @@ async function handle_admin(request){
                 contentText:contentText,
                 priority:priority,
                 top_timestamp:top_timestamp,
+                modify_timestamp:modify_timestamp,
                 hidden:hidden,
                 changefreq:changefreq
             };
@@ -869,6 +885,7 @@ async function handle_admin(request){
                     contentText:contentText,
                     priority:priority,
                     top_timestamp:top_timestamp,
+                    modify_timestamp:modify_timestamp,
                     hidden:hidden,
                     changefreq:changefreq
                 },
@@ -913,7 +930,7 @@ async function handle_admin(request){
         let title=ret.title,//文章标题
             img=ret.img,//插图
             link=ret.link,//永久链接
-            createDate=ret.createDate,//发布日期
+            createDate=ret.createDate.replace('T',' '),//发布日期
             category=ret.category,//分类
             tags=ret.tags,//标签
             priority=void 0===ret.priority?"0.5":ret.priority,//权重
@@ -922,6 +939,7 @@ async function handle_admin(request){
             contentHtml=ret["content-html-code"],//文章内容-html格式
             contentText="",//文章摘要
             top_timestamp=ret.top_timestamp*1,//置顶则设置时间戳,不置顶时为0
+            modify_timestamp=new Date().getTime()+8*60*60*1000,//修改时间戳
             hidden=ret.hidden*1,//是否隐藏
             id=ret.id;//文章id
             
@@ -947,6 +965,7 @@ async function handle_admin(request){
                 contentText:contentText,
                 priority:priority,
                 top_timestamp:top_timestamp,
+                modify_timestamp:modify_timestamp,
                 hidden:hidden,
                 changefreq:changefreq
             };
@@ -966,6 +985,7 @@ async function handle_admin(request){
                     contentText:contentText,
                     priority:priority,
                     top_timestamp:top_timestamp,
+                    modify_timestamp:modify_timestamp,
                     hidden:hidden,
                     changefreq:changefreq
                 },
@@ -988,8 +1008,17 @@ async function handle_admin(request){
     }
     
     //返回结果
-    if(!json &&!html){
+    if(!json &&!html && !file){
         json = '{"msg":"some errors","rst":false}'
+    }
+    if(file){
+      return new Response(file,{
+        headers:{
+          "content-type":"application/octet-stream;charset=utf-8",
+          "Content-Disposition":"attachment; filename=cfblog-"+new Date().getTime()+".json"
+        },
+        status:200
+      })
     }
     if(html){
         return new Response(html,{
