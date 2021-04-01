@@ -9,17 +9,22 @@
 5. 添加后台首页选择功能
 6. 添加文章隐藏功能
 
-
 一些功能还在规划中：
 
 2. 静态搜索
 3. 文章独立密码
 
+## 演示地址: [https://blog.arrontg.cf](https://blog.arrontg.cf "cf-blog演示站点")
+
+## 更新日志详见[CFBLOG-PLUS更新日志](https://blog.arrontg.cf/article/000006/.html)
+
+**想了解index_plus.js的源码吗？看作者的源码解读文章《[解读CFBlog-Plus的源码](https://blog.arrontg.cf/article/000008/.html)》**
+
 ---
 
 > 这是一个运行在cloudflare workers 上的博客程序,使用 cloudflare KV作为数据库,无其他依赖.
 兼容静态博客的速度,以及动态博客的灵活性,方便搭建不折腾.
-演示地址: [https://blog.arrontg.cf](https://blog.arrontg.cf )
+演示地址: [https://blog.arrontg.cf](https://blog.arrontg.cf "cf-blog演示站点")，[https://blog.gezhong.vip](https://blog.gezhong.vip "cf-blog演示站点")
 
 ### 原CFBlog-TG 讨论群: [@CloudflareBlog](https://t.me/cloudflareblog )
 # 主要特点
@@ -41,8 +46,6 @@
   [CFBlog-Plus搭建教程](https://blog.arrontg.cf/article/000004/.html)
 
 # 更新日志
-
-[CFBLOG-PLUS更新日志](https://blog.arrontg.cf/article/000006/.html)
 
 [CFBLOG更新日志](https://blog.gezhong.vip/article/009000/update-log.html)
 
