@@ -23,8 +23,10 @@ const OPT = { //网站配置
     "theme_github_path":"https://cdn.jsdelivr.net/gh/Arronlong/cfblog-plus@master/themes/",//主题路径
     "themeURL" : "https://raw.githubusercontent.com/Arronlong/cfblog-plus/master/themes/JustNews/", // 模板地址,以 "/"" 结尾
 
+    
     "pageSize" : 5,//每页文章数
     "recentlySize" : 6,//最近文章数
+    "recentlyType" : 1,//最近文章类型：1-按创建时间倒序（按id倒序），2-按修改时间排序
     "readMoreLength":150,//阅读更多截取长度
     "cacheTime" : 60*60*24*2, //文章在浏览器的缓存时长(秒),建议=文章更新频率
     "html404" : `<b>404</b>`,//404页面代码    
@@ -143,23 +145,25 @@ Disallow: /admin`,//robots.txt设置
 };
 
 //---对部分配置进行处理---
-
-//CFBLOG 通用变量
-this.CFBLOG = ACCOUNT.kv_var;
-//默认为非私密博客
-if(null==OPT.privateBlog){
-    OPT.privateBlog=false;
-}
-//处理themeURL、theme_github_path参数设定
-if(OPT.themeURL.substr(-1)!='/'){
-    OPT.themeURL=OPT.themeURL+'/';
-}
-if(OPT.theme_github_path.substr(-1)!='/'){
-    OPT.theme_github_path=OPT.theme_github_path+'/';
-}
-//置顶样式对于前台来说，与codeBeforHead结合即可
-if(OPT.top_flag_style){
-  OPT.codeBeforHead += OPT.top_flag_style
+{
+  //CFBLOG 通用变量
+  this.CFBLOG = ACCOUNT.kv_var;
+  
+  //默认为非私密博客
+  if(null==OPT.privateBlog){
+      OPT.privateBlog=false;
+  }
+  //处理themeURL、theme_github_path参数设定
+  if(OPT.themeURL.substr(-1)!='/'){
+      OPT.themeURL=OPT.themeURL+'/';
+  }
+  if(OPT.theme_github_path.substr(-1)!='/'){
+      OPT.theme_github_path=OPT.theme_github_path+'/';
+  }
+  //置顶样式对于前台来说，与codeBeforHead结合即可
+  if(OPT.top_flag_style){
+    OPT.codeBeforHead += OPT.top_flag_style
+  }
 }
 
 /**------【②.猎杀时刻：请求处理入口】-----**/
@@ -325,17 +329,7 @@ async function renderBlog(url){
         tags=await getWidgetTags(),
         links=await getWidgetLink(),
         articles_all=await getArticlesList(),
-        //近期文章以最后修改时间排序
-        articles_recently=sort([].concat(articles_all),'modify_timestamp').slice(0,OPT.recentlySize);
-    
-    for(var i=0;i<articles_recently.length;i++){
-        //调整文章的日期(yyyy-MM-dd)和url
-        if(articles_recently[i].top_timestamp && !articles_recently[i].title.startsWith(OPT.top_flag)){
-          articles_recently[i].title = OPT.top_flag + articles_recently[i].title
-        }
-        articles_recently[i].createDate10=articles_recently[i].createDate.substr(0,10),
-        articles_recently[i].url="/article/"+articles_recently[i].id+"/"+articles_recently[i].link+".html";
-    }
+        articles_recently=await getRecentlyArticles(articles_all);
     
     /** 前台博客
      *  路径格式：
@@ -376,18 +370,10 @@ async function renderBlog(url){
     //获取当页要显示文章列表
     let articles_show = articles.slice((pageNo-1)*OPT.pageSize,pageNo*OPT.pageSize);
     // console.log(articles_show)
-    for(i=0;i<articles_show.length;i++){
-        //调整文章的日期(yyyy-MM-dd)、年、月、日、内容长度和url
-        if(articles_show[i].top_timestamp && !articles_show[i].title.startsWith(OPT.top_flag)){
-          articles_show[i].title = OPT.top_flag + articles_show[i].title
-        }
-        articles_show[i].createDate10=articles_show[i].createDate.substr(0,10),
-        articles_show[i].createDateYear=articles_show[i].createDate.substr(0,4),
-        articles_show[i].createDateMonth=articles_show[i].createDate.substr(5,7),
-        articles_show[i].createDateDay=articles_show[i].createDate.substr(8,10),
-        articles_show[i].contentLength=articles_show[i].contentText.length,
-        articles_show[i].url="/article/"+articles_show[i].id+"/"+articles_show[i].link+".html";
-    }
+    
+    //处理文章属性（年月日、url等）
+    processArticleProp(articles_show);
+
     // console.log(url.pathname)
     let url_prefix = url.pathname.replace(/(.*)\/page\/\d+/,'$1/')
     if(url_prefix.substr(-1)=='/'){
@@ -443,35 +429,13 @@ async function handle_article(id){
         categories=await getWidgetCategory(),
         tags=await getWidgetTags(),
         links=await getWidgetLink(),
-        //近期文章以最后修改时间排序
-        articles_recently=sort(await getArticlesList(),'modify_timestamp').slice(0,OPT.recentlySize);
-    
-    for(var i=0;i<articles_recently.length;i++){
-        //调整文章的日期(yyyy-MM-dd)和url
-        if(articles_recently[i].top_timestamp && !articles_recently[i].title.startsWith(OPT.top_flag)){
-          articles_recently[i].title = OPT.top_flag + articles_recently[i].title
-        }
-        articles_recently[i].createDate10=articles_recently[i].createDate.substr(0,10),
-        articles_recently[i].url="/article/"+articles_recently[i].id+"/"+articles_recently[i].link+".html";
-    }
+        articles_recently=await getRecentlyArticles();
 
     //获取上篇、本篇、下篇文章
     let articles_sibling=await getSiblingArticle(id);
-    for(i=0;i<articles_sibling.length;i++){
-        //调整文章的日期(yyyy-MM-dd)、文章长度和url
-        if(articles_sibling[i]){
-            if(articles_sibling[i].top_timestamp && !articles_sibling[i].title.startsWith(OPT.top_flag)){
-              articles_sibling[i].title = OPT.top_flag + articles_sibling[i].title
-            }
-            //调整文章的日期(yyyy-MM-dd)、年、月、日、内容长度和url
-            articles_sibling[i].createDate10=articles_sibling[i].createDate.substr(0,10),
-            articles_sibling[i].createDateYear=articles_sibling[i].createDate.substr(0,4),
-            articles_sibling[i].createDateMonth=articles_sibling[i].createDate.substr(5,7),
-            articles_sibling[i].createDateDay=articles_sibling[i].createDate.substr(8,10),
-            articles_sibling[i].contentLength=articles_sibling[i].contentText.length,
-            articles_sibling[i].url="/article/"+articles_sibling[i].id+"/"+articles_sibling[i].link+".html";
-        }
-    }
+    
+    //处理文章属性（年月日、url等）
+    processArticleProp(articles_sibling);
     
     //获取本篇文章
     let article=articles_sibling[1];
@@ -528,7 +492,7 @@ async function handle_admin(request){
                         
         //添加后台首页配置
         if(OPT.admin_home_idx && OPT.admin_home_idx>=1 && OPT.admin_home_idx<=4){
-          html = html.replace("$('#myTab li:eq(0) 1').tab('show')","$('#myTab a:eq("+OPT.admin_home_idx+")').tab('show')")
+          html = html.replace("$('#myTab li:eq(0) 1').tab('show')","$($('#myTab a[href*=\"'+location.hash+'\"]')[0]||$('#myTab a:eq("+OPT.admin_home_idx+")')).tab('show')")
         }
         //添加置顶样式
         if(OPT.top_flag_style){
@@ -895,6 +859,17 @@ async function handle_admin(request){
 function parseBasicAuth(request){
     const auth=request.headers.get("Authorization");
     if(!auth||!/^Basic [A-Za-z0-9._~+/-]+=*$/i.test(auth)){
+        const token = request.headers.get("Token");
+        if(!token){
+            //获取url请求对象
+            let url=new URL(request.url)
+            let paths=url.pathname.trim("/").split("/")
+
+            //校验权限
+            if("admin"==paths[0] && "search.xml"==paths[1]){
+                return token === OPT.third_token
+            }
+        }
         return false;
     }
     const[user,pwd]=atob(auth.split(" ").pop()).split(":");
@@ -902,9 +877,60 @@ function parseBasicAuth(request){
     return user===ACCOUNT.user && pwd===ACCOUNT.password
 }
 
+//获取所有【公开】文章：仅前台使用
+async function getArticlesList(){
+  let articles_all = await getAllArticlesList();
+  
+  for(var i=0;i<articles_all.length;i++)
+    if(articles_all[i].hidden){
+        articles_all.splice(i,1);
+    }
+  return articles_all;
+}
+
 //文章排序：先按id倒排，再按置顶时间倒排
 function sortArticle(articles){
   return sort(sort(articles,'id'),'top_timestamp');
+}
+
+//获取近期文章列表
+async function getRecentlyArticles(articles){
+  if(!articles){
+    articles = await getArticlesList();
+  }
+  if(OPT.recentlyType == 2){//按修改时间倒序
+    articles = sort([].concat(articles),'modify_timestamp');
+  }
+  let articles_recently = articles.slice(0,OPT.recentlySize);
+
+  for(var i=0;i<articles_recently.length;i++){
+      //调整文章的日期(yyyy-MM-dd)和url
+      if(articles_recently[i].top_timestamp && !articles_recently[i].title.startsWith(OPT.top_flag)){
+        articles_recently[i].title = OPT.top_flag + articles_recently[i].title
+      }
+      articles_recently[i].createDate10=articles_recently[i].createDate.substr(0,10),
+      articles_recently[i].url="/article/"+articles_recently[i].id+"/"+articles_recently[i].link+".html";
+  }
+  return articles_recently;
+}
+
+//处理文章的属性信息：日期(yyyy-MM-dd)、年、月、日、内容长度和url
+function processArticleProp(articles){
+    for(var i=0;i<articles.length;i++){
+        //调整文章的日期(yyyy-MM-dd)、文章长度和url
+        if(articles[i]){
+            if(articles[i].top_timestamp && !articles[i].title.startsWith(OPT.top_flag)){
+              articles[i].title = OPT.top_flag + articles[i].title
+            }
+            //调整文章的日期(yyyy-MM-dd)、年、月、日、内容长度和url
+            articles[i].createDate10=articles[i].createDate.substr(0,10),
+            articles[i].createDateYear=articles[i].createDate.substr(0,4),
+            articles[i].createDateMonth=articles[i].createDate.substr(5,7),
+            articles[i].createDateDay=articles[i].createDate.substr(8,10),
+            articles[i].contentLength=articles[i].contentText.length,
+            articles[i].url="/article/"+articles[i].id+"/"+articles[i].link+".html";
+        }
+    }
 }
 
 //获取前台模板源码, template_path:模板的相对路径
@@ -1018,17 +1044,6 @@ async function generateId(){
         await saveIndexNum(parseInt(article_id_seq)+1)
         return ("00000"+(parseInt(article_id_seq)+1)).substr(-6)
     }
-}
-
-//获取所有【公开】文章：仅前台使用
-async function getArticlesList(){
-  let articles_all = await getAllArticlesList();
-  
-  for(var i=0;i<articles_all.length;i++)
-    if(articles_all[i].hidden){
-        articles_all.splice(i,1);
-    }
-  return articles_all;
 }
 
 /**------【⑤.术业有专攻，读写KV方法集】-----**/
