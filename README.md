@@ -8,15 +8,17 @@
 4. 添加文章置顶设置功能
 5. 添加后台首页选择功能
 6. 添加文章隐藏功能
+7. 静态搜索
 
 一些功能还在规划中：
 
-2. 静态搜索
-3. 文章独立密码
+1. 文章独立密码
 
 ## 演示地址: [https://blog.arrontg.cf](https://blog.arrontg.cf "cf-blog演示站点")
 
-## 更新日志详见[CFBLOG-PLUS更新日志](https://blog.arrontg.cf/article/000006/.html)
+## 部署教程:  [CFBlog-Plus搭建教程](https://blog.arrontg.cf/article/000004/.html)
+
+## 更新日志: [CFBLOG-PLUS更新日志](https://blog.arrontg.cf/article/000006/.html)
 
 **想了解index_plus.js的源码吗？看作者的源码解读文章《[解读CFBlog-Plus的源码](https://blog.arrontg.cf/article/000008/.html)》**
 
@@ -41,11 +43,8 @@
  * 唯一瓶颈是 workers的日访问量10w,大约能承受2万IP /日
  * 文章数:1G存储空间,几万篇问题不大
 
-# 部署步骤
 
-  [CFBlog-Plus搭建教程](https://blog.arrontg.cf/article/000004/.html)
-
-# 更新日志
+# 原作者更新日志
 
 [CFBLOG更新日志](https://blog.gezhong.vip/article/009000/update-log.html)
 
