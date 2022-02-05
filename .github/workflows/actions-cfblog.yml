@@ -1,0 +1,51 @@
+name: 'CFBlog'
+
+on:
+  watch:
+    types: started
+  schedule:
+    # 时间是按UTC设置的，实际执行时间，则自动按东八区执行
+    # 即+8小时，故实际执行时间为：18点
+    - cron: 0 10 * * *
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    
+    steps:
+    - uses: actions/checkout@master
+    - name: Get search.xml、sitemap.xml
+      env:
+        CFBLOG_TOKEN: ${{ secrets.CFBLOG_TOKEN }}
+        CFBLOG_HOST: ${{ secrets.CFBLOG_HOST }}
+      run: |
+        curl 'https://'$CFBLOG_HOST'/admin/search.xml' -H 'cfblog_token: '$CFBLOG_TOKEN'' >search.xml
+        curl 'https://'$CFBLOG_HOST'/admin/sitemap.xml' -H 'cfblog_token: '$CFBLOG_TOKEN'' >sitemap.xml
+
+    - name: change to branch
+      env:
+        CFBLOG_BRANCH: ${{ secrets.CFBLOG_BRANCH }}
+      run: |
+        git checkout -b $CFBLOG_BRANCH
+        git checkout $CFBLOG_BRANCH
+        
+    - name: commit change
+      run: |
+        git config --global user.email "action@github.com"
+        git config --global user.name "action"
+        git add .
+        git commit -m "Update from Github Action_"`date +%Y-%m-%d`
+        
+    - name: push change
+      env:
+        GITHUB_LOGIN: ${{ github.repository_owner }}
+        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+      run: |
+        git push -f https://$GITHUB_LOGIN:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git
+        
+    - name: done
+      run: echo 'done'
+      

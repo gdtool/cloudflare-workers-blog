@@ -9,8 +9,8 @@
 		<meta name="keywords" content="{{ &keyWords }}" />
 		<meta name="description" content="{{ &OPT.siteDescription }}" />
 
-		<link rel='stylesheet' id='stylesheet-css' href='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/main.css' type='text/css' media='all' />
-		<link rel='stylesheet' id='font-awesome-css' href='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/font-awesome.css?ver=6.1.2' type='text/css' media='all' />
+		<link rel='stylesheet' id='stylesheet-css' href='{{ &OPT.theme_github_path }}JustNews/files/main.css' type='text/css' media='all' />
+		<link rel='stylesheet' id='font-awesome-css' href='{{ &OPT.theme_github_path }}JustNews/files/font-awesome.css?ver=6.1.2' type='text/css' media='all' />
 		<link rel='stylesheet' id='wp-block-library-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/block-library/style.min.css?ver=5.6' type='text/css' media='all' />
 		<link rel='stylesheet' id='wp-components-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/components/style.min.css?ver=5.6' type='text/css' media='all' />
 		<link rel='stylesheet' id='wp-editor-font-css' href='https://fonts.geekzu.org/css?family=Noto+Serif%3A400%2C400i%2C700%2C700i&#038;ver=5.6' type='text/css' media='all' />
@@ -41,7 +41,7 @@
 						{{ /OPT.logo }}
 						
 						{{ ^OPT.logo }}
-						<a href="/" rel="home"><img src="https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/logo2.png" alt="请自定义OPT.logo"></a>
+						<a href="/" rel="home"><img src="{{ &OPT.theme_github_path }}JustNews/files/logo2.png" alt="请自定义OPT.logo"></a>
 						{{ /OPT.logo }}
 					</div>
 				</div>
@@ -206,12 +206,12 @@
 				</i>
 			</div>
 		</div>
-		<link rel='stylesheet' id='lazyload-spinner-css' href='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/lazyload.css?ver=3.4.9' type='text/css' media='all' />
+		<link rel='stylesheet' id='lazyload-spinner-css' href='{{ &OPT.theme_github_path }}JustNews/files/lazyload.css?ver=3.4.9' type='text/css' media='all' />
 		<script type='text/javascript' id='main-js-extra'>/* <![CDATA[ */
 			var _wpcom_js = {
 				"webp": "",
 				"ajaxurl": "",
-				"theme_url": "https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/",
+				"theme_url": "{{ &OPT.theme_github_path }}JustNews/",
 				"slide_speed": "5000",
 				"user_card_height": "356",
 				"video_height": "482",
@@ -238,14 +238,14 @@
 			};
 			/* ]]> */
 			</script>
-		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/main.js?ver=6.1.2' id='main-js'></script>
+		<script type='text/javascript' src='{{ &OPT.theme_github_path }}JustNews/files/main.js?ver=6.1.2' id='main-js'></script>
 		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/js/clipboard.min.js?ver=5.6' id='clipboard-js'></script>
 		<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/emojify.js@1.1.0/dist/js/emojify.min.js?ver=1.1.0' id='emojify-js'></script>
-		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/wp-embed.js?ver=6.1.2' id='wp-embed-js'></script>
-		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/lazySizesConfig.js?ver=3.4.9' id='lazysizes-config-js'></script>
-		<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.2.2/plugins/unveilhooks/ls.unveilhooks.min.js?ver=5.6' id='unveilhooks-js'></script>
-		<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.2.2/plugins/bgset/ls.bgset.min.js?ver=5.6' id='bgset-js'></script>
-		<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.2.2/lazysizes.min.js?ver=5.6' id='lazysizes-js'></script>
+		<script type='text/javascript' src='{{ &OPT.theme_github_path }}JustNews/files/wp-embed.js?ver=6.1.2' id='wp-embed-js'></script>
+		<script type='text/javascript' src='{{ &OPT.theme_github_path }}JustNews/files/lazySizesConfig.js?ver=3.4.9' id='lazysizes-config-js'></script>
+		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/aFarkas/lazysizes@5.2.2/plugins/unveilhooks/ls.unveilhooks.min.js?ver=5.6' id='unveilhooks-js'></script>
+		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/aFarkas/lazysizes@5.2.2/plugins/bgset/ls.bgset.min.js?ver=5.6' id='bgset-js'></script>
+		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/aFarkas/lazysizes@5.2.2/lazysizes.min.js?ver=5.6' id='lazysizes-js'></script>
 		<script type='text/javascript' id='fifu-image-js-js-extra'>/* <![CDATA[ */
 			var fifuImageVars = {
 				"fifu_lazy": "1",
@@ -258,7 +258,7 @@
 			};
 			/* ]]> */
 			</script>
-		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/image.js?ver=3.4.9' id='fifu-image-js-js'></script>
+		<script type='text/javascript' src='{{ &OPT.theme_github_path }}JustNews/files/image.js?ver=3.4.9' id='fifu-image-js-js'></script>
 
 		<script id="module-clipboard">(function($) {
 				$(function() {
