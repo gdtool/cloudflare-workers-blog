@@ -1,6 +1,6 @@
 'use strict';
 const OPT = {
-    "user" : "admin", //后台密码
+    "user" : "admin", //后台密码请修改
     "password" : "yourSelfPwd", //后台密码
     "siteDomain" : "blog.gezhong.vip",// 域名(不带https 也不带/)
     "siteName" : "CF workers blog",//博客名称
