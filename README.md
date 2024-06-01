@@ -1,5 +1,5 @@
 > 这是一个运行在cloudflare workers 上的博客程序,使用 cloudflare KV作为数据库,无其他依赖.
-兼容静态博客的速度,以及动态博客的灵活性,方便搭建不折腾.
+兼容静态博客的速度,以及动态博客的灵活性,方便搭建不折腾.很稳定
 演示地址: [https://blog.gezhong.vip](https://blog.gezhong.vip "cf-blog演示站点")
 
 ### TG 讨论群: [@CloudflareBlog](https://t.me/cloudflareblog "")
