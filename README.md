@@ -40,4 +40,4 @@
 
 如果你觉的本项目帮到你了，还请资持一下作者
 
-* [捐赠](https://afdian.net/@zhaopp "爱发电")  
+* [Donate](https://www.paypal.com/paypalme/stevie90)  
