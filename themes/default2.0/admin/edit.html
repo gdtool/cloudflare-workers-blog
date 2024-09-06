@@ -30,7 +30,7 @@
 	<div>
 		<ul id="myTab" class="nav nav-tabs">
 			<li class="active">
-				<a href="/admin/" >返回文章</a>
+				<a href="/admin/" >Return to Articles</a>
 			</li>
 		</ul>
 	</div>
@@ -48,7 +48,7 @@
 					<input type="text" class="form-control" name="title" id="title" placeholder="标题" style="width: 800px;" required="true">
 				</div>
 				<div class="form-group">
-					<label for="exampleInputEmail2">特色图片</label>
+					<label for="exampleInputEmail2">Picture Link</label>
 					<input type="url" class="form-control" style="width: 400px;"  name="img" id="img" placeholder="" >
 				</div>
 				<div class="form-group">
@@ -73,7 +73,7 @@
 					<input type="text" class="form-control" name="priority" id="priority" value='0.5' placeholder="权重">
 				</div>
 				<div class="form-group">
-					<label for="exampleInputEmail2">更新频率</label>
+					<label for="exampleInputEmail2">Update Frequency</label>
 					    <select class="form-control" id="changefreq" name="changefreq">
 						<option value="daily" >Daily</option>
 						<option value="hourly" >Hourly</option>
@@ -146,7 +146,7 @@
     }
     //删除
     function deleteArticle(){
-        if (confirm("确定删除吗?删除后重新发布才能生效")==false){ 
+        if (confirm("Confirm to Delete?删除后重新发布才能生效")==false){ 
             return false; 
           }
         $.ajax({
