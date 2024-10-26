@@ -7,7 +7,7 @@
 		<![endif]-->
 		<!--[if !(IE 7) | !(IE 8) ]>
 			<!-->
-			<html lang="zh-CN">
+			<html lang="fr-FR">
 			<!--<![endif]-->
 			<head>
 				<meta charset="UTF-8" />
@@ -128,17 +128,17 @@
 											</div>
 											<p>{{ &contentText }} ...
 												<span class="read-more">
-													<a href="/article/{{&id}}/{{&link}}.html">继续阅读 &raquo;</a></span>
+													<a href="/article/{{&id}}/{{&link}}.html">Continuer la lecture &raquo;</a></span>
 											</p>
 										</div>
 										<!-- .entry-summary -->
 										<footer class="entry-meta">
-											<span>分类:
+											<span>Classification:
 											{{ #category }}
 												<a href="/category/{{&.}}" rel="category tag">{{&.}}</a>
 											{{ /category }}
 											</span>
-											<span>标签：
+											<span>Étiquette：
 											{{ #tags }}
 												<a href="/tags/{{&.}}" rel="tag">{{&.}}</a>
 											{{ /tags }}
@@ -149,7 +149,7 @@
 									
 								{{ /articleList }}
 									<nav id="nav-below" class="navigation" role="navigation">
-										<div class="assistive-text">文章分页</div>
+										<div class="assistive-text">Pagination des articles</div>
 										{{ #pageNewer }}
 
 										<div class="nav-previous alignleft">
@@ -160,7 +160,7 @@
 										
 										<div class="nav-next alignright">
 										{{ #pageOlder }}
-											<a href="{{ &url }}">下一页
+											<a href="{{ &url }}">Page suivante
 												<span class="meta-nav">→</span></a>
 										{{ /pageOlder }}
 										</div>
@@ -172,7 +172,7 @@
 						<!-- #primary -->
 						<div id="secondary" class="widget-area" role="complementary">
 							<aside id="recent-posts-2" class="widget widget_recent_entries">
-								<p class="widget-title">近期文章</p>
+								<p class="widget-title">Articles récents</p>
 								<ul>
 									{{ #widgetRecentlyList }}
 									<li><a href="{{ &url }}">{{ &title }}</a></li>
@@ -180,7 +180,7 @@
 								</ul>
 							</aside>
 							<aside id="categories-4" class="widget widget_categories">
-								<p class="widget-title">分类目录</p>
+								<p class="widget-title">Catégories</p>
 								<ul>
 									{{ #widgetCategoryList }}
 									<li class="cat-item cat-item-5"><a href="/category/{{&.}}">{{&.}}</a></li>
@@ -188,7 +188,7 @@
 								</ul>
 							</aside>
 							<aside id="tag_cloud-2" class="widget widget_tag_cloud">
-								<p class="widget-title">标签云</p>
+								<p class="widget-title">Tag Cloud</p>
 								<div class="tagcloud">
 									{{ #widgetTagsList }}
 									<a href="/tags/{{&.}}" class="tag-cloud-link tag-link-18 tag-link-position-3" style="font-size: 8pt;">{{&.}}</a>
@@ -197,9 +197,9 @@
 								</div>
 							</aside>
 							<aside id="meta-2" class="widget widget_meta">
-								<p class="widget-title">链接</p>
+								<p class="widget-title">Lien</p>
 								<ul>
-									<li><a href="/admin/" target="_blank">管理站点</a></li>
+									<li><a href="/admin/" target="_blank">Gérer le site</a></li>
 									{{ #widgetLinkList }}
 									<li><a href="{{ &url }}" target="_blank">{{ &title }}</a></li>
 									{{ /widgetLinkList }}
