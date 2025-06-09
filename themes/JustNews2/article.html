@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="renderer" content="webkit">
+		<meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width,viewport-fit=cover">
+		<title>{{ &articleSingle.title }} - {{ &OPT.siteName }}</title>
+		<meta name="keywords" content="{{ &keyWords }}" />
+		<meta name="description" content="{{ &OPT.siteDescription }}" />
+
+		<link rel='stylesheet' id='stylesheet-css' href='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/main.css' type='text/css' media='all' />
+		<link rel='stylesheet' id='font-awesome-css' href='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/font-awesome.css?ver=6.1.2' type='text/css' media='all' />
+		<link rel='stylesheet' id='wp-block-library-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/block-library/style.min.css?ver=5.6' type='text/css' media='all' />
+		<link rel='stylesheet' id='wp-components-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/components/style.min.css?ver=5.6' type='text/css' media='all' />
+		<link rel='stylesheet' id='wp-editor-font-css' href='https://fonts.geekzu.org/css?family=Noto+Serif%3A400%2C400i%2C700%2C700i&#038;ver=5.6' type='text/css' media='all' />
+		<link rel='stylesheet' id='wp-block-editor-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/block-editor/style.min.css?ver=5.6' type='text/css' media='all' />
+		<link rel='stylesheet' id='wp-nux-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/nux/style.min.css?ver=5.6' type='text/css' media='all' />
+		<link rel='stylesheet' id='wp-editor-css' href='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/css/dist/editor/style.min.css?ver=5.6' type='text/css' media='all' />
+		<link rel='stylesheet' id='mux_video_block_style-css' href='https://cdn.jsdelivr.net/gh/newexsexy/wp@master/wp-content/plugins/ilab-media-tools/public/blocks/mediacloud-mux.blocks.style.min.css' type='text/css' media='all' />
+		
+		<link rel='stylesheet' id='emojify-css' href='https://cdn.jsdelivr.net/npm/emojify.js@1.1.0/dist/css/basic/emojify.min.css?ver=1.1.0' type='text/css' media='all' />
+		<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js?ver=3.5.1' id='jquery-core-js'></script>
+		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.6/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.3.2' id='jquery-migrate-js'></script>
+		<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/wpcom-cn/assets/fonts/icons-2.6.4.js?ver=6.1.2' id='wpcom-icons-js'></script>
+		<link rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.3.2/styles/tomorrow-night-bright.min.css">
+		<script src='https://cdn.staticfile.org/highlight.js/10.3.2/highlight.min.js'></script>
+		{{ &OPT.codeBeforHead }}
+	</head>
+	<body class="archive paged category category-zhishi category-5 paged-2 category-paged-2 lang-cn el-boxed">
+		<header class="header">
+			<div class="container clearfix">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="icon-bar icon-bar-1"></span>
+						<span class="icon-bar icon-bar-2"></span>
+						<span class="icon-bar icon-bar-3"></span>
+					</button>
+					<div class="logo">
+						{{ #OPT.logo }}
+						<a href="/" rel="home"><img src="{{ &OPT.logo }}" alt="{{ &OPT.siteName }}"></a>
+						{{ /OPT.logo }}
+						
+						{{ ^OPT.logo }}
+						<a href="/" rel="home"><img src="https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/logo2.png" alt="请自定义OPT.logo"></a>
+						{{ /OPT.logo }}
+					</div>
+				</div>
+				<div class="collapse navbar-collapse">
+					<nav class="navbar-left primary-menu">
+						<ul id="menu-%e5%af%bc%e8%88%aa" class="nav navbar-nav wpcom-adv-menu">
+							{{ #widgetMenuList }}
+								<li class="menu-item"><a href="{{ &url }}">{{ &title }}</a></li>
+							{{ /widgetMenuList }}
+						</ul>
+					</nav>
+					<div class="navbar-action pull-right">
+						<div id="j-user-wrap">
+							<a class="login cur" href="/admin">登录</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+		<div id="wrap">
+			<div class="container wrap">
+
+
+				<div class="main">
+					<article id="post-{{ &articleSingle.id }}" class="post-{{ &articleSingle.id }} post type-post status-publish format-standard has-post-thumbnail hentry ">
+						<div class="entry">
+							<div class="entry-head">
+								<h1 class="entry-title">{{ &articleSingle.title }}</h1>
+								<div class="entry-info">
+									<time class="entry-date published" datetime="{{ &articleSingle.createDate }}" pubdate="">{{ &articleSingle.createDate10 }}</time>
+									<span class="dot">•</span>
+									{{ #articleSingle.category }}
+										<a href="/category/{{&.}}" rel="category tag">{{&.}}</a>
+									{{ /articleSingle.category }}
+									<span class="dot">•</span>
+									<span class="leancloud_visitors">
+										<em>{{ &OPT.otherCodeA }}</em>
+										<span class="waline-pageview-count" data-path="{{ &articleSingle.url }}" />
+									</span>
+								</div>
+							</div>
+							<div class="entry-content">
+								{{ &articleSingle.contentHtml }}
+							</div>
+							<div class="entry-footer">
+								<div class="entry-tag">
+									{{ #articleSingle.tags }}
+										<a href="/tags/{{&.}}" rel="tag">{{&.}}</a>
+									{{ /articleSingle.tags }}
+								</div>
+
+								<div class="entry-page">
+
+									{{ #articleNewer }}	
+									<div class="entry-page-prev j-lazy lazyloaded" style="background-image: url(&quot;{{ &img }}&quot;); display: block;" data-original="{{ &img }}" data-bg="{{ &img }}" fifu-width="392" fifu-height="86">
+										<a href="{{ &url }}" title="{{ &title }}" rel="prev" >
+											<span>{{ &title }}</span></a>
+										<div class="entry-page-info">
+											<span class="pull-left">
+												<i class="wpcom-icon wi">
+													<svg aria-hidden="true">
+														<use xlink:href="#wi-arrow-left-double"></use>
+													</svg>
+												</i>上一篇</span>
+											<span class="pull-right">{{ &createDate10 }}</span></div>
+									</div>
+									{{ /articleNewer }}
+
+									{{ #articleOlder }}
+									<div class="entry-page-next j-lazy lazyloaded" style="background-image: url(&quot;{{ &img }}&quot;); display: block;" data-original="{{ &img }}" data-bg="{{ &img }}" fifu-width="392" fifu-height="86">
+										<a href="{{ &url }}" title="{{ &title }}" rel="next" >
+											<span>{{ &title }}</span></a>
+										<div class="entry-page-info">
+											<span class="pull-right">下一篇
+												<i class="wpcom-icon wi">
+													<svg aria-hidden="true">
+														<use xlink:href="#wi-arrow-right-double"></use></svg>
+												</i>
+											</span>
+											<span class="pull-left">{{ &createDate10 }}</span></div>
+									</div>
+									{{ /articleOlder }}
+								</div>
+							</div>
+							<div id="comments" class="entry-comments">
+								{{ &OPT.commentCode }}
+							</div>
+						</div>
+					</article>
+				</div>
+
+				<aside class="sidebar">
+					<div id="wpcom-post-thumb-2" class="widget widget_post_thumb">
+						<h3 class="widget-title">
+							<span>近期文章</span></h3>
+						<ul>
+							{{ #widgetRecentlyList }}
+							<li class="item">
+								<div class="item-img">
+									<a class="item-img-inner" href="{{ &url }}" title="{{ &title }}">
+										<img width="480" height="264" src="{{ &img }}" class="attachment-post-thumbnail size-post-thumbnail wp-post-image j-lazy" alt="" title="" data-original="{{ &img }}" /></a>
+								</div>
+								<div class="item-content">
+									<p class="item-title">
+										<a href="{{ &url }}" title="{{ &title }}">{{ &title }}</a></p>
+									<p class="item-date">{{ &createDate10 }}</p></div>
+							</li>
+							{{ /widgetRecentlyList }}									
+						</ul>
+					</div>
+					<div id="categories-3" class="widget widget_categories">
+						<h3 class="widget-title">
+							<span>分类目录</span></h3>
+						<ul>
+							{{ #widgetCategoryList }}
+							<li class="cat-item cat-item-5 current-cat">
+								<a aria-current="page" href="/category/{{&.}}">{{&.}}</a></li>
+							{{ /widgetCategoryList }}
+						</ul>
+					</div>
+					<div id="tag_cloud-3" class="widget widget_tag_cloud">
+						<h3 class="widget-title">
+							<span>标签</span></h3>
+						<div class="tagcloud">
+							{{ #widgetTagsList }}
+							<a href="/tags/{{&.}}" class="tag-cloud-link tag-link-6 tag-link-position-1" style="font-size: 8pt;" aria-label="{{&.}}">{{&.}}</a>
+							{{ /widgetTagsList }}
+						</div>
+					</div>
+
+					<div id="linkcat-0" class="widget widget_links">
+						<h3 class="widget-title">
+							<span>链接</span></h3>
+						<ul class='xoxo blogroll'>
+							{{ #widgetLinkList }}
+									<li><a href="{{ &url }}" target="_blank">{{ &title }}</a></li>
+							{{ /widgetLinkList }}
+						</ul>
+					</div>
+					{{ &OPT.widgetOther }}
+				</aside>
+			</div>
+		</div>
+		<footer class="footer">
+			<div class="container">
+				<div class="clearfix">
+					<div class="footer-col footer-col-copy">
+						<div class="copyright">
+							<p>{{ &OPT.copyRight }}</p>
+						</div>
+					</div>
+					<div class="footer-col footer-col-sns">
+						<div class="footer-sns"></div>
+					</div>
+				</div>
+			</div>
+		</footer>
+		<div class="action action-style-0 action-color-0 action-pos-0" style="bottom:20%;">
+			<div class="action-item gotop j-top">
+				<i class="wpcom-icon wi action-item-icon">
+					<svg aria-hidden="true">
+						<use xlink:href="#wi-arrow-up-2"></use>
+					</svg>
+				</i>
+			</div>
+		</div>
+
+<link rel='stylesheet' id='lazyload-spinner-css' href='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/lazyload.css?ver=3.4.9' type='text/css' media='all' />
+<script type='text/javascript' id='main-js-extra'>
+/* <![CDATA[ */
+var _wpcom_js = {"webp":"","ajaxurl":"","theme_url":"https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/","slide_speed":"5000","lightbox":"1","user_card_height":"356","video_height":"482","fixed_sidebar":"1","login_url":"/admin","register_url":"/","errors":{"require":"\u4e0d\u80fd\u4e3a\u7a7a","email":"\u8bf7\u8f93\u5165\u6b63\u786e\u7684\u7535\u5b50\u90ae\u7bb1","pls_enter":"\u8bf7\u8f93\u5165","password":"\u5bc6\u7801\u5fc5\u987b\u4e3a6~32\u4e2a\u5b57\u7b26","passcheck":"\u4e24\u6b21\u5bc6\u7801\u8f93\u5165\u4e0d\u4e00\u81f4","phone":"\u8bf7\u8f93\u5165\u6b63\u786e\u7684\u624b\u673a\u53f7\u7801","terms":"Please read and agree with the terms","sms_code":"\u9a8c\u8bc1\u7801\u9519\u8bef","captcha_verify":"\u8bf7\u70b9\u51fb\u6309\u94ae\u8fdb\u884c\u9a8c\u8bc1","captcha_fail":"\u70b9\u51fb\u9a8c\u8bc1\u5931\u8d25\uff0c\u8bf7\u91cd\u8bd5","nonce":"\u968f\u673a\u6570\u6821\u9a8c\u5931\u8d25","req_error":"\u8bf7\u6c42\u5931\u8d25"},"follow_btn":"<i class=\"wpcom-icon wi\"><svg aria-hidden=\"true\"><use xlink:href=\"#wi-add\"><\/use><\/svg><\/i>\u5173\u6ce8","followed_btn":"\u5df2\u5173\u6ce8","user_card":"1"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/main.js?ver=6.1.2' id='main-js'></script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.6/wp-includes/js/comment-reply.min.js?ver=5.6' id='comment-reply-js'></script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/idiotWu/jQuery-TOC@0.0.6/dist/jquery.toc.min.js?ver=1.0.1' id='githuber-toc-js'></script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/WordPress/WordPress@5.5.3/wp-includes/js/clipboard.min.js?ver=5.6' id='clipboard-js'></script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/emojify.js@1.1.0/dist/js/emojify.min.js?ver=1.1.0' id='emojify-js'></script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/wp-embed.js?ver=6.1.2' id='wp-embed-js'></script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/lazySizesConfig.js?ver=3.4.9' id='lazysizes-config-js'></script>
+<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.2.2/plugins/unveilhooks/ls.unveilhooks.min.js?ver=5.6' id='unveilhooks-js'></script>
+<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.2.2/plugins/bgset/ls.bgset.min.js?ver=5.6' id='bgset-js'></script>
+<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.2.2/lazysizes.min.js?ver=5.6' id='lazysizes-js'></script>
+<script type='text/javascript' id='fifu-image-js-js-extra'>
+/* <![CDATA[ */
+var fifuImageVars = {"fifu_lazy":"1","fifu_woo_lbox_enabled":"1","fifu_woo_zoom":"inline","fifu_is_product":"","fifu_is_flatsome_active":"","fifu_rest_url":"","fifu_nonce":"96a15ffec7"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/gh/gdtool/cloudflare-workers-blog@master/themes/JustNews/files/image.js?ver=3.4.9' id='fifu-image-js-js'></script>
+
+
+
+<script id="module-toc"> (function($) { $(function() { $("#md-post-toc").initTOC({ selector: "h2, h3, h4, h5, h6", scope: ".post", }); $("#md-post-toc a").click(function(e) { e.preventDefault(); var aid = $( this ).attr( "href" ); $( "html, body" ).animate( { scrollTop: $(aid).offset().top - 80 }, "slow" ); }); $("#md-widget-toc").initTOC({ selector: "h2, h3, h4, h5, h6", scope: ".post", }); $("#md-widget-toc a").click(function(e) { e.preventDefault(); var aid = $( this ).attr( "href" ); $( "html, body" ).animate( { scrollTop: $(aid).offset().top - 80 }, "slow" ); }); }); })(jQuery); </script> <script id="module-clipboard"> (function($) { $(function() { var pre = document.getElementsByTagName("pre"); var pasteContent = document.getElementById("paste-content"); var hasLanguage = false; for (var i = 0; i < pre.length; i++) { var codeClass = pre[i].children[0].className; var isLanguage = codeClass.indexOf("language-"); var excludedCodeClassNames = [ "language-katex", "language-seq", "language-sequence", "language-flow", "language-flowchart", "language-mermaid", ]; var isExcluded = excludedCodeClassNames.indexOf(codeClass); if (isExcluded !== -1) { isLanguage = -1; } if (isLanguage !== -1) { var button = document.createElement("button"); button.className = "copy-button"; button.textContent = "Copy"; pre[i].appendChild(button); hasLanguage = true; } }; if (hasLanguage) { var copyCode = new ClipboardJS(".copy-button", { target: function(trigger) { return trigger.previousElementSibling; } }); copyCode.on("success", function(event) { event.clearSelection(); event.trigger.textContent = "Copied"; window.setTimeout(function() { event.trigger.textContent = "Copy"; }, 2000); }); } }); })(jQuery); </script>
+<script id="module-emojify">
+				(function($) {
+					$(function() {
+						if (typeof emojify !== "undefined") {
+							emojify.setConfig({
+								img_dir: "https://cdn.jsdelivr.net/npm/emojify.js@1.1.0/dist/images/basic",
+								blacklist: {
+									"classes": ["no-emojify"],
+									"elements": ["script", "textarea", "pre", "code"]
+								}
+							});
+							emojify.run();
+						} else {
+							console.log("[wp-githuber-md] emogify is undefined.");
+						}
+					});
+				})(jQuery);
+			</script>
+<script>hljs.initHighlightingOnLoad(); //代码高亮
+					</script>
+		{{ &OPT.codeBeforBody }}
+	</body>
+
+</html>

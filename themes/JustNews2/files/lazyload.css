@@ -1,0 +1,1 @@
+.lazyload,.lazyloading{opacity:0}.lazyloaded{opacity:1;transition:opacity 300ms}.lazyload{opacity:0}.lazyloading{opacity:1;transition:opacity 300ms;background:#f7f7f7 url(./loading.gif) no-repeat center}
